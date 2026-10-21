@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+
+# Production / Distribution builds
+dist/
+build/
+out/
+
+# Binaries & external tools (downloaded dynamically via scripts/download-tools.js)
+tools/*
+!tools/.gitkeep
+
+# Native host binaries & temp files
+native-host/*.obj
+native-host/*.pdb
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment & credentials
+.env
+.env.local
+.env.*.local
+
+# Operating System files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Temporary & scratch files
+*.tmp
+api.zip
+merge_renderer.ps1
+renderer_license_temp.js

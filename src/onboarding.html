@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to CyberDM</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #0a0e1a 0%, #0f1629 50%, #0a0e1a 100%);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: #e0e0e0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Title bar for dragging */
+        .title-bar {
+            height: 35px;
+            -webkit-app-region: drag;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 8px;
+            flex-shrink: 0;
+        }
+
+        .close-btn {
+            -webkit-app-region: no-drag;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.4);
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px 10px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .close-btn:hover {
+            background: rgba(255, 50, 50, 0.3);
+            color: #ff5555;
+        }
+
+        /* Carousel container */
+        .onboarding {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0 50px 30px;
+        }
+
+        /* Slides */
+        .slides-container {
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            opacity: 0;
+            transform: translateX(60px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: all;
+        }
+
+        .slide.exit {
+            opacity: 0;
+            transform: translateX(-60px);
+        }
+
+        .slide-icon {
+            font-size: 64px;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 30px;
+            background: rgba(0, 210, 255, 0.06);
+            border: 1px solid rgba(0, 210, 255, 0.12);
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .slide-title {
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff, #00d2ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        .slide-desc {
+            font-size: 14px;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.5);
+            text-align: center;
+            max-width: 450px;
+        }
+
+        /* Feature highlights */
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 8px;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: rgba(0, 210, 255, 0.04);
+            border: 1px solid rgba(0, 210, 255, 0.08);
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .feature-item:hover {
+            background: rgba(0, 210, 255, 0.08);
+            border-color: rgba(0, 210, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .feature-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .feature-text {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.3;
+        }
+
+        /* Shortcut list */
+        .shortcuts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 8px;
+        }
+
+        .shortcut-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            background: rgba(0, 210, 255, 0.04);
+            border: 1px solid rgba(0, 210, 255, 0.08);
+            border-radius: 10px;
+        }
+
+        .shortcut-keys {
+            display: flex;
+            gap: 4px;
+        }
+
+        .key {
+            padding: 3px 8px;
+            background: rgba(0, 210, 255, 0.1);
+            border: 1px solid rgba(0, 210, 255, 0.2);
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #00d2ff;
+            font-family: 'Consolas', monospace;
+        }
+
+        .shortcut-action {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Navigation */
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 600px;
+            padding: 0 10px;
+            flex-shrink: 0;
+        }
+
+        .dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .dot.active {
+            background: #00d2ff;
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        .nav-btn {
+            padding: 10px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-skip {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-skip:hover {
+            color: rgba(255, 255, 255, 0.6);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #00d2ff, #7b2ff7);
+            color: white;
+            box-shadow: 0 4px 20px rgba(0, 210, 255, 0.3);
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 210, 255, 0.4);
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #00d2ff, #00ff88);
+            color: #0a0e1a;
+            font-weight: 700;
+            box-shadow: 0 4px 20px rgba(0, 210, 255, 0.3);
+        }
+
+        .btn-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 255, 136, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="title-bar">
+        <button class="close-btn" onclick="skip()" title="Skip">✕</button>
+    </div>
+
+    <div class="onboarding">
+        <div class="slides-container">
+            <!-- Slide 1: Welcome -->
+            <div class="slide active" data-slide="0">
+                <div class="slide-icon">🚀</div>
+                <div class="slide-title">Welcome to CyberDM!</div>
+                <div class="slide-desc">
+                    The next-generation download manager with multi-threaded acceleration,
+                    video downloading, and a stunning cyberpunk interface.
+                </div>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <span class="feature-icon">⚡</span>
+                        <span class="feature-text">Up to 32 threads for blazing speed</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🎬</span>
+                        <span class="feature-text">Download videos from YouTube & more</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">⏸️</span>
+                        <span class="feature-text">Pause & resume downloads anytime</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📋</span>
+                        <span class="feature-text">Auto-detect URLs from clipboard</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2: How to Download -->
+            <div class="slide" data-slide="1">
+                <div class="slide-icon">📥</div>
+                <div class="slide-title">Start Downloading</div>
+                <div class="slide-desc">
+                    Adding a download is simple! Here's how:
+                </div>
+                <div class="shortcuts-list">
+                    <div class="shortcut-item">
+                        <span class="shortcut-action">1. Click "Add URL" or press</span>
+                        <div class="shortcut-keys">
+                            <span class="key">Ctrl</span>
+                            <span class="key">A</span>
+                        </div>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="shortcut-action">2. Paste your download link</span>
+                        <div class="shortcut-keys">
+                            <span class="key">Ctrl</span>
+                            <span class="key">V</span>
+                        </div>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="shortcut-action">3. Choose folder & click Download</span>
+                        <div class="shortcut-keys">
+                            <span class="key">Enter</span>
+                        </div>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="shortcut-action">Or just copy a URL — we'll detect it!</span>
+                        <div class="shortcut-keys">
+                            <span class="key">Auto</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: Video Downloads -->
+            <div class="slide" data-slide="2">
+                <div class="slide-icon">🎬</div>
+                <div class="slide-title">Video Downloads</div>
+                <div class="slide-desc">
+                    Paste a video URL from any supported site and CyberDM will
+                    let you choose the quality before downloading.
+                </div>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <span class="feature-icon">▶️</span>
+                        <span class="feature-text">YouTube</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📘</span>
+                        <span class="feature-text">Facebook</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🎵</span>
+                        <span class="feature-text">TikTok</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🐦</span>
+                        <span class="feature-text">Twitter/X</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📸</span>
+                        <span class="feature-text">Instagram</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🎮</span>
+                        <span class="feature-text">Twitch & More</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 4: Tips -->
+            <div class="slide" data-slide="3">
+                <div class="slide-icon">💡</div>
+                <div class="slide-title">Pro Tips</div>
+                <div class="slide-desc">
+                    Master CyberDM with these keyboard shortcuts:
+                </div>
+                <div class="shortcuts-list">
+                    <div class="shortcut-item">
+                        <span class="shortcut-action">Add new download</span>
+                        <div class="shortcut-keys">
+                            <span class="key">Ctrl</span>
+                            <span class="key">A</span>
+                        </div>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="shortcut-action">Delete selected</span>
+                        <div class="shortcut-keys">
+                            <span class="key">Delete</span>
+                        </div>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="shortcut-action">Close dialog</span>
+                        <div class="shortcut-keys">
+                            <span class="key">Esc</span>
+                        </div>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="shortcut-action">Settings → Customize threads, speed & more</span>
+                        <div class="shortcut-keys">
+                            <span class="key">⚙️</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 5: Ready -->
+            <div class="slide" data-slide="4">
+                <div class="slide-icon">✨</div>
+                <div class="slide-title">You're All Set!</div>
+                <div class="slide-desc">
+                    CyberDM is ready to accelerate your downloads.
+                    Click the button below to start using the app.
+                </div>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <span class="feature-icon">🌙</span>
+                        <span class="feature-text">Beautiful dark neon theme</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📊</span>
+                        <span class="feature-text">Real-time speed graphs</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🔔</span>
+                        <span class="feature-text">Smart notifications</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🖥️</span>
+                        <span class="feature-text">System tray support</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-container">
+            <button class="nav-btn btn-skip" onclick="skip()">Skip</button>
+
+            <div class="dots">
+                <div class="dot active" data-dot="0" onclick="goToSlide(0)"></div>
+                <div class="dot" data-dot="1" onclick="goToSlide(1)"></div>
+                <div class="dot" data-dot="2" onclick="goToSlide(2)"></div>
+                <div class="dot" data-dot="3" onclick="goToSlide(3)"></div>
+                <div class="dot" data-dot="4" onclick="goToSlide(4)"></div>
+            </div>
+
+            <button class="nav-btn btn-next" id="next-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const totalSlides = 5;
+
+        function goToSlide(index) {
+            const slides = document.querySelectorAll('.slide');
+            const dots = document.querySelectorAll('.dot');
+
+            slides[currentSlide].classList.remove('active');
+            slides[currentSlide].classList.add('exit');
+
+            setTimeout(() => {
+                slides[currentSlide].classList.remove('exit');
+            }, 500);
+
+            currentSlide = index;
+
+            slides[currentSlide].classList.add('active');
+
+            dots.forEach((d, i) => {
+                d.classList.toggle('active', i === currentSlide);
+            });
+
+            // Update button
+            const nextBtn = document.getElementById('next-btn');
+            if (currentSlide === totalSlides - 1) {
+                nextBtn.textContent = "Let's Go! 🚀";
+                nextBtn.className = 'nav-btn btn-start';
+                nextBtn.onclick = finish;
+            } else {
+                nextBtn.textContent = 'Next →';
+                nextBtn.className = 'nav-btn btn-next';
+                nextBtn.onclick = nextSlide;
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                goToSlide(currentSlide + 1);
+            }
+        }
+
+        function skip() {
+            if (window.cyberDM) {
+                window.cyberDM.finishOnboarding();
+            }
+        }
+
+        function finish() {
+            if (window.cyberDM) {
+                window.cyberDM.finishOnboarding();
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'Enter') {
+                if (currentSlide === totalSlides - 1) finish();
+                else nextSlide();
+            }
+            if (e.key === 'ArrowLeft' && currentSlide > 0) goToSlide(currentSlide - 1);
+            if (e.key === 'Escape') skip();
+        });
+    </script>
+</body>
+</html>

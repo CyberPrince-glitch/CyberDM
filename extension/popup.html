@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CyberDM</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <main class="shell">
+        <header class="topbar">
+            <div class="brand">
+                <img src="icons/icon-48.png" alt="" width="38" height="38">
+                <div class="brand-copy">
+                    <h1>Cyber<span>DM</span></h1>
+                    <p>DOWNLOAD COMPANION</p>
+                </div>
+            </div>
+            <div class="live-indicator"><i></i> READY</div>
+        </header>
+
+        <section class="hero" aria-label="Current page">
+            <div class="hero-orb orb-one"></div><div class="hero-orb orb-two"></div>
+            <div class="hero-kicker"><span class="kicker-mark">✳</span> SMART DOWNLOADS</div>
+            <h2>Take control<br>of your <strong>downloads.</strong></h2>
+            <div class="site-line"><span class="site-dot"></span><span id="current-site">Current page</span></div>
+            <div class="hero-glass" aria-hidden="true"></div>
+        </section>
+
+        <section class="add-section" aria-label="Add a download">
+            <label class="section-label" for="url-input">ADD A LINK</label>
+            <div class="url-entry">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                <input type="text" id="url-input" placeholder="Paste a file or video URL" autocomplete="off" spellcheck="false">
+                <button class="icon-action" id="paste-btn" type="button" title="Paste from clipboard" aria-label="Paste from clipboard">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="4" width="12" height="16" rx="2"/><path d="M16 4V3a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h2"/></svg>
+                </button>
+            </div>
+            <button class="primary-btn" id="download-btn" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                <span>Add to CyberDM</span><span class="button-arrow">↗</span>
+            </button>
+            <button class="scan-btn" id="scan-btn" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V5a1 1 0 0 1 1-1h2M17 4h2a1 1 0 0 1 1 1v2M20 17v2a1 1 0 0 1-1 1h-2M7 20H5a1 1 0 0 1-1-1v-2M4 12h16M10 8l-2 4 2 4M14 8l2 4-2 4"/></svg>
+                Scan this page for media
+            </button>
+        </section>
+
+        <div id="status" class="status" role="status" aria-live="polite" style="display:none"></div>
+
+        <section id="pending" class="content-section pending" style="display:none">
+            <div class="section-heading">
+                <div><span class="eyebrow">CONNECTION</span><h3>Waiting to send</h3></div>
+                <div class="pending-actions"><button id="retry-all-pending" type="button">Retry all</button><button id="clear-pending" type="button" aria-label="Clear pending requests">Clear</button></div>
+            </div>
+            <div id="pending-list" class="pending-list"></div>
+        </section>
+
+        <section id="detected" class="content-section detected" style="display:none">
+            <div class="section-heading"><div><span class="eyebrow">ON THIS PAGE</span><h3>Detected media</h3></div><span class="section-icon">⌁</span></div>
+            <div class="media-list" id="media-list"></div>
+        </section>
+
+        <section class="preferences">
+            <div class="section-heading"><div><span class="eyebrow">YOUR PREFERENCES</span><h3>Capture settings</h3></div><span class="settings-glyph">⚙</span></div>
+            <div class="setting-row">
+                <div class="setting-icon capture-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 17v3h14v-3"/></svg></div>
+                <div class="setting-copy"><strong>Auto-capture</strong><small>Send browser downloads to CyberDM</small></div>
+                <label class="toggle" aria-label="Auto-capture downloads"><input type="checkbox" id="auto-capture" checked><span></span></label>
+            </div>
+            <div class="setting-row">
+                <div class="setting-icon privacy-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/><path d="m9 12 2 2 4-4"/></svg></div>
+                <div class="setting-copy"><strong>Use browser cookies</strong><small>For downloads that require sign-in</small></div>
+                <label class="toggle" aria-label="Include browser cookies"><input type="checkbox" id="include-cookies"><span></span></label>
+            </div>
+            <p class="privacy-note">Cookies are shared with CyberDM only for a download you start.</p>
+        </section>
+
+        <footer class="footer"><span><i></i> DESIGNED FOR YOUR DESKTOP</span><span>CYBERDM</span></footer>
+    </main>
+    <script src="popup.js"></script>
+</body>
+</html>

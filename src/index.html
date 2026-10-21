@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberDM - Free Download Manager</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Title Bar -->
+    <div class="title-bar">
+        <div class="title-bar-left">
+            <img src="../assets/icon.png" class="app-icon" alt="CyberDM">
+            <span class="app-title">CyberDM</span>
+        </div>
+        <div class="title-bar-center">
+            <div class="speed-graph" id="speed-graph">
+                <div class="speed-bar" style="height: 30%"></div>
+                <div class="speed-bar" style="height: 50%"></div>
+                <div class="speed-bar" style="height: 70%"></div>
+                <div class="speed-bar" style="height: 45%"></div>
+                <div class="speed-bar" style="height: 80%"></div>
+                <div class="speed-bar" style="height: 60%"></div>
+                <div class="speed-bar" style="height: 35%"></div>
+                <div class="speed-bar" style="height: 90%"></div>
+                <div class="speed-bar" style="height: 55%"></div>
+                <div class="speed-bar" style="height: 40%"></div>
+            </div>
+            <div class="speed-info">
+                <span class="speed-value" id="total-speed">0 KB/s</span>
+                <span class="speed-label">Download Speed</span>
+            </div>
+        </div>
+        <div class="window-controls">
+            <button class="win-btn minimize" onclick="cyberDM.minimizeWindow()">─</button>
+            <button class="win-btn maximize" onclick="cyberDM.maximizeWindow()">□</button>
+            <button class="win-btn close" onclick="cyberDM.closeWindow()">✕</button>
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar glass">
+        <div class="toolbar-group">
+            <button class="toolbar-btn" onclick="showAddDialog()" title="Add URL">
+                <div class="btn-icon">+</div>
+                <span>Add URL</span>
+            </button>
+            <button class="toolbar-btn" onclick="resumeSelected()" title="Resume">
+                <div class="btn-icon">▶</div>
+                <span>Resume</span>
+            </button>
+            <button class="toolbar-btn" onclick="pauseSelected()" title="Pause">
+                <div class="btn-icon">❚❚</div>
+                <span>Pause</span>
+            </button>
+            <button class="toolbar-btn" onclick="cancelSelected()" title="Cancel">
+                <div class="btn-icon">✕</div>
+                <span>Cancel</span>
+            </button>
+        </div>
+        <div class="toolbar-divider"></div>
+        <div class="toolbar-group">
+            <button class="toolbar-btn" onclick="deleteSelected()" title="Delete">
+                <div class="btn-icon">🗑</div>
+                <span>Delete</span>
+            </button>
+            <button class="toolbar-btn" onclick="openFolder()" title="Open Folder">
+                <div class="btn-icon">📁</div>
+                <span>Folder</span>
+            </button>
+        </div>
+        <div class="toolbar-divider"></div>
+        <div class="toolbar-group">
+            <button class="toolbar-btn" onclick="startQueue()" title="Start Queue">
+                <div class="btn-icon">⏵</div>
+                <span>Start</span>
+            </button>
+            <button class="toolbar-btn" onclick="stopQueue()" title="Stop Queue">
+                <div class="btn-icon">⏸</div>
+                <span>Stop</span>
+            </button>
+            <button class="toolbar-btn" onclick="showQueueOrder()" title="Reorder queued downloads">
+                <div class="btn-icon">⇅</div>
+                <span>Queue Order</span>
+            </button>
+            <button class="toolbar-btn" onclick="showScheduler()" title="Scheduler">
+                <div class="btn-icon">⏰</div>
+                <span>Scheduler</span>
+            </button>
+            <button class="toolbar-btn" onclick="showTutorial()" title="Tutorial">
+                <div class="btn-icon">📖</div>
+                <span>Tutorial</span>
+            </button>
+        </div>
+        <div class="toolbar-divider"></div>
+        <div class="toolbar-group">
+            <button class="toolbar-btn" onclick="showSettings()" title="Settings">
+                <div class="btn-icon">⚙</div>
+                <span>Settings</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar glass">
+            <div class="sidebar-header">
+                <span>Categories</span>
+            </div>
+            <nav class="category-nav">
+                <a href="#" class="category-item active" data-category="all">
+                    <div class="cat-icon all">↓</div>
+                    <span>All Downloads</span>
+                    <span class="cat-count" id="count-all">0</span>
+                </a>
+                <a href="#" class="category-item" data-category="downloading">
+                    <div class="cat-icon downloading">▶</div>
+                    <span>Downloading</span>
+                    <span class="cat-count" id="count-downloading">0</span>
+                </a>
+                <a href="#" class="category-item" data-category="queued">
+                    <div class="cat-icon queued">⏳</div>
+                    <span>Queued</span>
+                    <span class="cat-count" id="count-queued">0</span>
+                </a>
+                <a href="#" class="category-item" data-category="paused">
+                    <div class="cat-icon paused">❚❚</div>
+                    <span>Paused</span>
+                    <span class="cat-count" id="count-paused">0</span>
+                </a>
+                <a href="#" class="category-item" data-category="completed">
+                    <div class="cat-icon completed">✓</div>
+                    <span>Completed</span>
+                    <span class="cat-count" id="count-completed">0</span>
+                </a>
+                <a href="#" class="category-item" data-category="failed">
+                    <div class="cat-icon failed">✕</div>
+                    <span>Failed</span>
+                    <span class="cat-count" id="count-failed">0</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-header">
+                <span>File Types</span>
+            </div>
+            <nav class="category-nav">
+                <a href="#" class="category-item" data-category="video">
+                    <div class="cat-icon video">🎬</div>
+                    <span>Videos</span>
+                    <span class="cat-count" id="count-video">0</span>
+                </a>
+                <a href="#" class="category-item" data-category="audio">
+                    <div class="cat-icon audio">🎵</div>
+                    <span>Music</span>
+                    <span class="cat-count" id="count-audio">0</span>
+                </a>
+                <a href="#" class="category-item" data-category="document">
+                    <div class="cat-icon document">📄</div>
+                    <span>Documents</span>
+                    <span class="cat-count" id="count-document">0</span>
+                </a>
+                <a href="#" class="category-item" data-category="software">
+                    <div class="cat-icon software">💾</div>
+                    <span>Programs</span>
+                    <span class="cat-count" id="count-software">0</span>
+                </a>
+                <a href="#" class="category-item" data-category="archive">
+                    <div class="cat-icon archive">📦</div>
+                    <span>Archives</span>
+                    <span class="cat-count" id="count-archive">0</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Content -->
+        <main class="content">
+            <!-- Download List Header -->
+            <div class="list-header glass">
+                <div class="col col-select"><input type="checkbox" id="select-all"></div>
+                <div class="col col-name">File Name</div>
+                <div class="col col-size">Size</div>
+                <div class="col col-status">Status</div>
+                <div class="col col-progress">Progress</div>
+                <div class="col col-speed">Speed</div>
+                <div class="col col-eta">ETA</div>
+            </div>
+
+            <!-- Download List -->
+            <div class="download-list" id="download-list">
+                <!-- Empty State -->
+                <div class="empty-state" id="empty-state">
+                    <div class="empty-icon">↓</div>
+                    <h3>No Downloads</h3>
+                    <p>Click "Add URL" or paste a link to start downloading</p>
+                    <button class="btn-add" onclick="showAddDialog()">Add Download</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar glass">
+        <div class="status-left">
+            <span class="status-item">
+                <span class="dot downloading"></span>
+                <span id="status-downloading">0</span> Downloading
+            </span>
+            <span class="status-item">
+                <span class="dot queued"></span>
+                <span id="status-queued">0</span> Queued
+            </span>
+            <span class="status-item">
+                <span class="dot completed"></span>
+                <span id="status-completed">0</span> Completed
+            </span>
+        </div>
+        <div class="status-center">
+            <span id="status-message">Ready</span>
+        </div>
+        <div class="status-right">
+            <span id="status-threads">Threads: 8</span>
+        </div>
+    </div>
+
+    <!-- Add URL Dialog -->
+    <div class="dialog-overlay" id="add-dialog" style="display: none;">
+        <div class="dialog glass">
+            <div class="dialog-header">
+                <h3>Add Download</h3>
+                <button class="dialog-close" onclick="hideAddDialog()">✕</button>
+            </div>
+            <div class="dialog-body">
+                <div class="form-group">
+                    <label>URL:</label>
+                    <input type="text" id="input-url" placeholder="Paste download URL here...">
+                </div>
+                <div class="form-group">
+                    <label>Save to:</label>
+                    <div class="input-group">
+                        <input type="text" id="input-path" placeholder="Download folder">
+                        <button class="btn-browse" onclick="browseFolder()">Browse</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>File Name:</label>
+                    <input type="text" id="input-filename" placeholder="Auto-detect">
+                </div>
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label>Threads:</label>
+                        <select id="input-threads">
+                            <option value="8" selected>8 Threads</option>
+                            <option value="16">16 Threads</option>
+                            <option value="24">24 Threads</option>
+                            <option value="32">32 Threads</option>
+                        </select>
+                    </div>
+                    <div class="form-group half">
+                        <label>Queue:</label>
+                        <select id="input-queue">
+                            <option value="main">Main Queue</option>
+                            <option value="none">No Queue</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox">
+                        <input type="checkbox" id="input-start" checked>
+                        <span>Start download immediately</span>
+                    </label>
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button class="btn-secondary" onclick="hideAddDialog()">Cancel</button>
+                <button class="btn-secondary" onclick="captureLiveStream()">Record Stream</button>
+                <button class="btn-primary" onclick="addDownload()">Add Download</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Quality Dialog -->
+    <div class="dialog-overlay" id="video-quality-dialog" style="display: none;">
+        <div class="dialog glass">
+            <div class="dialog-header">
+                <h3>🎬 Select Video Quality</h3>
+                <button class="dialog-close" onclick="hideVideoQualityDialog()">✕</button>
+            </div>
+            <div class="dialog-body">
+                <div class="video-info" id="video-info-container" style="display: none;">
+                    <div class="video-thumbnail" id="video-thumbnail"></div>
+                    <div class="video-details">
+                        <div class="video-title" id="video-title">Loading...</div>
+                        <div class="video-duration" id="video-duration"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Select Quality:</label>
+                    <div class="quality-options" id="quality-options">
+                        <div class="loading-quality">Loading available qualities...</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Save to:</label>
+                    <div class="input-group">
+                        <input type="text" id="video-save-path" placeholder="Download folder">
+                        <button class="btn-browse" onclick="browseVideoFolder()">Browse</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Video downloads join the shared queue and start when a slot is available.</label>
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button class="btn-secondary" onclick="hideVideoQualityDialog()">Cancel</button>
+                <button class="btn-primary" onclick="startVideoDownload()">Download</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Queue Order Dialog -->
+    <div class="dialog-overlay" id="queue-order-dialog" style="display: none;">
+        <div class="dialog glass">
+            <div class="dialog-header">
+                <h3>Queued Downloads</h3>
+                <button class="dialog-close" onclick="hideQueueOrder()">×</button>
+            </div>
+            <div class="dialog-body">
+                <p>Move queued jobs up or down. Active downloads keep running.</p>
+                <div id="queue-order-list"></div>
+            </div>
+            <div class="dialog-footer">
+                <button class="btn-secondary" onclick="hideQueueOrder()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scheduler Dialog -->
+    <div class="dialog-overlay" id="scheduler-dialog" style="display: none;">
+        <div class="dialog glass">
+            <div class="dialog-header">
+                <h3>Scheduler</h3>
+                <button class="dialog-close" onclick="hideScheduler()">✕</button>
+            </div>
+            <div class="dialog-body">
+                <div class="form-group">
+                    <label class="checkbox">
+                        <input type="checkbox" id="scheduler-enabled">
+                        <span>Enable Scheduler</span>
+                    </label>
+                </div>
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label>Start Time:</label>
+                        <input type="time" id="scheduler-start" value="02:00">
+                    </div>
+                    <div class="form-group half">
+                        <label>End Time:</label>
+                        <input type="time" id="scheduler-end" value="08:00">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Days:</label>
+                    <div class="days-checkboxes">
+                        <label><input type="checkbox" value="0" checked> Sun</label>
+                        <label><input type="checkbox" value="1" checked> Mon</label>
+                        <label><input type="checkbox" value="2" checked> Tue</label>
+                        <label><input type="checkbox" value="3" checked> Wed</label>
+                        <label><input type="checkbox" value="4" checked> Thu</label>
+                        <label><input type="checkbox" value="5" checked> Fri</label>
+                        <label><input type="checkbox" value="6" checked> Sat</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>HTTP Download Speed Limit (KB/s):</label>
+                    <input type="number" id="scheduler-speed" value="0" min="0" placeholder="0 = Unlimited">
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button class="btn-secondary" onclick="hideScheduler()">Cancel</button>
+                <button class="btn-primary" onclick="saveScheduler()">Save Schedule</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Dialog -->
+    <div class="dialog-overlay" id="settings-dialog" style="display: none;">
+        <div class="dialog glass dialog-large">
+            <div class="dialog-header">
+                <h3>Settings</h3>
+                <button class="dialog-close" onclick="hideSettings()">✕</button>
+            </div>
+            <div class="dialog-body">
+                <div class="settings-tabs">
+                    <button class="tab-btn active" data-tab="general">General</button>
+                    <button class="tab-btn" data-tab="download">Download</button>
+                    <button class="tab-btn" data-tab="connection">Connection</button>
+                    <button class="tab-btn" data-tab="browser">Browser</button>
+                    <button class="tab-btn" data-tab="about">About</button>
+                </div>
+
+                <div class="settings-content">
+                    <div class="tab-content active" id="tab-general">
+                        <div class="form-group">
+                            <label>Default Download Path:</label>
+                            <div class="input-group">
+                                <input type="text" id="setting-path" placeholder="Select folder...">
+                                <button class="btn-browse" onclick="browseSettingsFolder()">Browse</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox">
+                                <input type="checkbox" id="setting-tray">
+                                <span>Minimize to system tray</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox">
+                                <input type="checkbox" id="setting-startup">
+                                <span>Start with Windows</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox">
+                                <input type="checkbox" id="setting-notify">
+                                <span>Show notification when download completes</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="tab-download">
+                        <div class="form-group">
+                            <label>Default Threads:</label>
+                            <select id="setting-threads">
+                                <option value="4" selected>4 Threads</option>
+                                <option value="6">6 Threads</option>
+                                <option value="8">8 Threads</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Max Concurrent Downloads:</label>
+                            <select id="setting-concurrent">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>HTTP Download Speed Limit (KB/s):</label>
+                            <input type="number" id="setting-speed" value="0" min="0" placeholder="0 = Unlimited">
+                        </div>
+                        <div class="form-group">
+                            <label>When File Exists:</label>
+                            <select id="setting-conflict-mode">
+                                <option value="ask">Ask every time</option>
+                                <option value="rename">Auto rename (recommended)</option>
+                                <option value="overwrite">Auto overwrite</option>
+                                <option value="skip">Auto skip</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox">
+                                <input type="checkbox" id="setting-resume" checked>
+                                <span>Resume downloads automatically</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="tab-connection">
+                        <div class="form-group">
+                            <label>Connection Timeout (seconds):</label>
+                            <input type="number" id="setting-timeout" value="30" min="5" max="300">
+                        </div>
+                        <div class="form-group">
+                            <label>Retry Attempts:</label>
+                            <input type="number" id="setting-retry" value="5" min="0" max="20">
+                        </div>
+                        <div class="form-group">
+                            <label>Retry Delay (seconds):</label>
+                            <input type="number" id="setting-delay" value="5" min="1" max="60">
+                        </div>
+                        <div class="form-group">
+                            <label>User Agent:</label>
+                            <input type="text" id="setting-agent" value="CyberDM/1.0">
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="tab-browser">
+                        <div class="form-group">
+                            <label>Browser Integration:</label>
+                            <p class="info-text">Install the Chrome extension to catch downloads from your browser.</p>
+                            <button class="btn-secondary" onclick="openExtensionFolder()">Open Extension Folder</button>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox">
+                                <input type="checkbox" id="setting-catch" checked>
+                                <span>Catch downloads from browser</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox">
+                                <input type="checkbox" id="setting-notify-video">
+                                <span>Notify when video is detected</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>File Types to Catch:</label>
+                            <input type="text" id="setting-types" placeholder="*.exe, *.zip, *.mp4, *.mkv">
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="tab-about">
+                        <div class="form-group">
+                            <label>🔑 Gemini API Key (for Maya AI):</label>
+                            <div class="input-group">
+                                <input type="password" id="setting-gemini-key" placeholder="Paste Gemini API key...">
+                                <button class="btn-browse" onclick="saveGeminiKeyFromSettings()">Save</button>
+                            </div>
+                            <p class="info-text" style="margin-top:6px;font-size:11px;color:#888">Get free key from Google AI Studio</p>
+                        </div>
+                        <div class="form-group">
+                            <label>📧 Support:</label>
+                            <button class="btn-secondary" onclick="sendSupportEmail()" style="width:100%">✉ Email Support (xcyberprince@gmail.com)</button>
+                        </div>
+                        <div class="form-group">
+                            <label>👨‍💻 Developer — Cyber Prince:</label>
+                            <div style="display:flex;gap:10px;margin-top:8px">
+                                <button class="btn-secondary" onclick="openDevYouTube()" style="flex:1">🎬 YouTube</button>
+                                <button class="btn-secondary" onclick="openDevFacebook()" style="flex:1">📘 Facebook</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <p class="info-text">CyberDM v1.0.1 — Free Download Manager</p>
+                            <p class="info-text" style="color:rgba(255,255,255,0.25);font-size:10px">© 2026 CyberDM. All rights reserved.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button class="btn-secondary" onclick="hideSettings()">Cancel</button>
+                <button class="btn-primary" onclick="saveSettings()">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Conflict Dialog -->
+    <div class="dialog-overlay" id="conflict-dialog" style="display: none;">
+        <div class="dialog glass conflict-dialog">
+            <div class="dialog-header conflict-header">
+                <h3>⚠️ File Already Exists</h3>
+                <button class="dialog-close" onclick="hideConflictDialog()">✕</button>
+            </div>
+            <div class="dialog-body">
+                <div class="conflict-info">
+                    <div class="conflict-file-icon">📄</div>
+                    <div class="conflict-file-details">
+                        <div class="conflict-filename" id="conflict-filename">filename.mp4</div>
+                        <div class="conflict-meta">
+                            <span id="conflict-size">0 MB</span>
+                            <span>•</span>
+                            <span id="conflict-date">Unknown date</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="conflict-message">
+                    A file with the same name already exists. What would you like to do?
+                </div>
+                <div class="conflict-preview" id="conflict-preview" style="display: none;">
+                    <span class="conflict-preview-label">New name:</span>
+                    <span class="conflict-preview-name" id="conflict-newname">filename (1).mp4</span>
+                </div>
+                <div class="conflict-options">
+                    <label class="checkbox conflict-checkbox">
+                        <input type="checkbox" id="conflict-remember">
+                        <span>Remember this choice for all files</span>
+                    </label>
+                </div>
+            </div>
+            <div class="dialog-footer conflict-footer">
+                <button class="btn-secondary" onclick="skipConflict()">Skip</button>
+                <button class="btn-secondary" onclick="overwriteConflict()">Overwrite</button>
+                <button class="btn-primary" onclick="renameConflict()">Rename</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clipboard Popup -->
+    <div class="clipboard-popup glass" id="clipboard-popup" style="display: none;">
+        <div class="clipboard-popup-header">
+            <div class="clipboard-popup-icon">↓</div>
+            <div class="clipboard-popup-title">
+                <span class="clipboard-popup-label">Download Detected</span>
+                <span class="clipboard-popup-filename" id="clipboard-filename">filename.mp4</span>
+            </div>
+            <button class="clipboard-popup-close" onclick="hideClipboardPopup()">✕</button>
+        </div>
+        <div class="clipboard-popup-body">
+            <div class="clipboard-popup-info">
+                <div class="clipboard-info-row">
+                    <span class="clipboard-info-label">Size:</span>
+                    <span class="clipboard-info-value" id="clipboard-size">Unknown</span>
+                </div>
+                <div class="clipboard-info-row">
+                    <span class="clipboard-info-label">Type:</span>
+                    <span class="clipboard-info-value" id="clipboard-type">Video</span>
+                </div>
+            </div>
+            <div class="clipboard-popup-url" id="clipboard-url-display">
+                https://example.com/file.mp4
+            </div>
+        </div>
+        <div class="clipboard-popup-actions">
+            <button class="btn-secondary" onclick="hideClipboardPopup()">Cancel</button>
+            <button class="btn-primary" onclick="downloadClipboardUrl()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7,10 12,15 17,10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Download
+            </button>
+        </div>
+        <div class="clipboard-popup-countdown">
+            <span>Auto-close in <span id="clipboard-countdown">10</span>s</span>
+        </div>
+    </div>
+
+    <!-- Update Available Dialog -->
+    <div class="dialog-overlay" id="update-dialog" style="display:none;">
+        <div class="dialog update-dialog glass">
+            <div class="dialog-header">
+                <h3>🔄 Update Available</h3>
+                <button class="dialog-close" onclick="hideUpdateDialog()">✕</button>
+            </div>
+            <div class="dialog-body">
+                <p id="update-message">A new version is available!</p>
+                <div class="update-versions">
+                    <span>Current: <strong id="update-current">0.2.0</strong></span>
+                    <span>→</span>
+                    <span>Latest: <strong id="update-latest">0.3.0</strong></span>
+                </div>
+                <div class="update-actions">
+                    <button class="btn-secondary" onclick="hideUpdateDialog()">Later</button>
+                    <button class="btn-primary" id="update-download-btn" onclick="downloadUpdate()">Download Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tutorial Dialog -->
+    <div class="dialog-overlay" id="tutorial-dialog" style="display:none;">
+        <div class="dialog glass dialog-large">
+            <div class="dialog-header">
+                <h3>📖 How to Use CyberDM</h3>
+                <button class="dialog-close" onclick="document.getElementById('tutorial-dialog').style.display='none'">✕</button>
+            </div>
+            <div class="dialog-body" style="max-height:400px;overflow-y:auto;line-height:1.7;color:#ccc;font-size:13px">
+                <h4 style="color:#00d2ff;margin-bottom:8px">🌐 Download Files</h4>
+                <p>1. Click <b>+ Add URL</b> → Paste any download link → Click <b>Add Download</b></p>
+                <p>2. For YouTube/Facebook videos, paste the video page URL — CyberDM auto-detects quality options</p>
+                <p>3. Select quality (1080p/720p/360p/MP3) → Click <b>Download</b></p>
+
+                <h4 style="color:#00d2ff;margin:14px 0 8px">🧲 Torrent Downloads</h4>
+                <p>Paste a magnet link into Add URL dialog — CyberDM handles it automatically</p>
+
+                <h4 style="color:#00d2ff;margin:14px 0 8px">🌐 Chrome Extension</h4>
+                <p>1. Go to <code>chrome://extensions</code> in Chrome</p>
+                <p>2. Enable <b>Developer Mode</b> (top-right toggle)</p>
+                <p>3. Click <b>Load Unpacked</b> → select the <code>extension</code> folder</p>
+                <p>4. Visit any website with videos → CyberDM button appears → Click to download</p>
+
+                <h4 style="color:#00d2ff;margin:14px 0 8px">💜 Maya AI Assistant</h4>
+                <p>1. Click the 💜 button (bottom-right corner)</p>
+                <p>2. Go to <b>Settings → About</b> → Enter your Gemini API Key</p>
+                <p>3. Chat with Maya, get movie suggestions (🎬), enable voice (🔊)</p>
+
+                <h4 style="color:#00d2ff;margin:14px 0 8px">⚙ Tips</h4>
+                <p>• <b>Speed Limit:</b> Settings → Download → Set KB/s limit (0 = unlimited)</p>
+                <p>• <b>Auto Resume:</b> Interrupted downloads resume automatically</p>
+                <p>• <b>Clipboard:</b> Copy any download link — CyberDM catches it instantly</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Maya AI Chat Widget -->
+    <div id="maya-toggle-btn" class="maya-toggle" onclick="toggleMayaChat()" title="Chat with Maya 💜">
+        <span class="maya-avatar">💜</span>
+        <span class="maya-pulse"></span>
+    </div>
+
+    <div id="maya-chat-panel" class="maya-panel" style="display:none;">
+        <div class="maya-header">
+            <div class="maya-header-info">
+                <span class="maya-header-avatar">💜</span>
+                <div>
+                    <div class="maya-name">Maya</div>
+                    <div class="maya-status">AI Assistant</div>
+                </div>
+            </div>
+            <div class="maya-header-actions">
+                <button onclick="searchMoviesUI()" title="Movie Search">🎬</button>
+                <button onclick="toggleMayaTTS()" id="maya-tts-btn" title="Voice">🔇</button>
+                <button onclick="clearMayaChat()" title="Clear">🗑</button>
+                <button onclick="toggleMayaChat()" title="Close">✕</button>
+            </div>
+        </div>
+        <div class="maya-messages" id="maya-messages">
+            <div class="maya-msg maya-msg-bot">
+                <span class="maya-msg-avatar">💜</span>
+                <div class="maya-msg-bubble" id="maya-greeting">Hey there! I'm Maya 💜 Set your Gemini API key in Settings to chat!</div>
+            </div>
+        </div>
+        <div id="maya-movie-results" class="maya-movies" style="display:none;"></div>
+        <div class="maya-input-area">
+            <input type="text" id="maya-input" placeholder="Ask Maya anything..." onkeypress="if(event.key==='Enter')sendToMaya()">
+            <button onclick="sendToMaya()" class="maya-send-btn">➤</button>
+        </div>
+        <div class="maya-api-hint" id="maya-api-hint" style="display:none;">
+            <input type="text" id="maya-api-key-input" placeholder="Paste your Gemini API Key...">
+            <button onclick="saveMayaKey()">Save</button>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>

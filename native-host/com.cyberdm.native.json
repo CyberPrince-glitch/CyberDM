@@ -1,0 +1,10 @@
+{
+  "name": "com.cyberdm.native",
+  "description": "CyberDM Download Manager Native Host",
+  "path": "C:\\Program Files\\CyberDM\\CyberDM.exe",
+  "args": ["--native-messaging-host"],
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://EXTENSION_ID_PLACEHOLDER/"
+  ]
+}

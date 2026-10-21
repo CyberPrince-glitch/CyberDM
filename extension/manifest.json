@@ -1,0 +1,54 @@
+{
+  "manifest_version": 3,
+  "name": "CyberDM - Free Download Manager",
+  "version": "1.0.1",
+  "description": "Send browser downloads and supported media links to the free CyberDM desktop manager.",
+  "permissions": [
+    "downloads",
+    "contextMenus",
+    "activeTab",
+    "scripting",
+    "nativeMessaging",
+    "notifications",
+    "storage",
+    "cookies",
+    "tabs",
+    "webRequest",
+    "webNavigation"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_end",
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

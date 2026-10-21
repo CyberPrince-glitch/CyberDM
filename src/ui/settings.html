@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Settings</title>
+    <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="main.css" rel="stylesheet">
+</head>
+<body class="p-3">
+    <h5 class="mb-3">Download Settings</h5>
+    <form id="settingsForm">
+        <div class="mb-2"><label class="form-label">Default Download Path</label><input id="setting-path" class="form-control" type="text"/></div>
+        <div class="mb-2"><label class="form-label">Concurrent Threads</label><input id="setting-threads" class="form-control" type="number" min="1"/></div>
+        <div class="mb-2"><label class="form-label">HTTP Download Speed Limit (KB/s, 0 = unlimited)</label><input id="setting-speed" class="form-control" type="number" min="0"/></div>
+        <div class="mb-2"><label class="form-label">File Conflict Mode</label><select id="setting-conflict-mode" class="form-select"><option value="ask">Ask</option><option value="skip">Skip</option><option value="overwrite">Overwrite</option><option value="rename">Rename</option></select></div>
+        <button type="button" class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+    </form>
+    <script src="settings.js"></script>
+</body>
+</html>
