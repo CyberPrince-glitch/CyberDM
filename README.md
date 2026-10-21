@@ -45,7 +45,7 @@ For Chrome Web Store submission, create the listing screenshots and provide an a
 
 ### Service and build files
 
-- `api/` contains PHP licensing/payment/admin endpoints and a SQL schema.
+- `docs/` contains comprehensive IPC documentation, developer guides, and the GitHub Pages landing site.
 - `native-host/` contains the Windows stdio shim source/binary, registry installer, and native-host manifest template. `scripts/build-native-host.js` compiles the shim during Windows builds.
 - `scripts/download-tools.js` installs and verifies the pinned yt-dlp 2026.08.19 release from the [official yt-dlp release page](https://github.com/yt-dlp/yt-dlp/releases/tag/2026.08.19) during development and builds.
 - `dist/` contains generated Windows build output. It is not the source of truth.
@@ -93,7 +93,7 @@ These are source-review findings, not claims from a successful runtime test:
 5. **Queue coverage is partial.** HTTP, yt-dlp video/stream, and torrent jobs share the configured concurrent-job limit, persisted queue start/stop state, and reorder controls. Per-job priority, unified retry, and recovery behavior remain unfinished.
 6. **Documentation was stale.** Older sections described features as missing even though new modules had been added, and advertised browser integration more completely than the native host supports.
 7. **Several optional helper flows are not complete.** Proxy and mirror helpers have incomplete IPC wiring, site-login IPC is not exposed by the preload API, and the renderer's URL-refresh callback has no active main-process sender. These modules are not counted as complete product features until they have UI, working IPC, and runtime checks.
-8. **Legacy server code remains outside the app.** Trial, activation, payment UI, IPC, and device-ID collection have been removed from the desktop. `api/` still contains old PHP endpoints, but the packaging file list does not include that folder and the desktop no longer calls those endpoints.
+8. **100% Client-Side Open-Source.** All legacy payment, license, and PHP server files have been completely purged from the repository. The desktop app is 100% free under the MIT license with zero telemetry or paid features.
 
 ## Roadmap
 
@@ -167,7 +167,7 @@ Work through these in order and keep this checklist current as behavior is imple
 | Network/media helpers | `src/*-client.js`, `src/*manager.js`, `src/video-converter.js`, `src/stream-grabber.js` | Protocols and optional download/media features |
 | Browser extension | `extension/` | MV3 popup, page scanner/overlay, service worker and capture actions |
 | Native messaging setup | `native-host/`, `src/main.js` | Host registration, framed stdin/stdout handling, single-instance forwarding, and download acknowledgement |
-| Legacy service files | `api/` | Archived PHP payment/license endpoints, excluded from Windows app packaging and unused by the desktop app |
+| Documentation & Web | `docs/` | IPC API docs, developer guide, troubleshooting, and GitHub Pages landing site |
 
 ## Development setup
 
