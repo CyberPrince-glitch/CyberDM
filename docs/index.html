@@ -1,0 +1,1851 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberDM 1.0.4 — The Free, Uncapped Windows Download Engine</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Space Grotesk, Inter, JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Three.js r128 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        void: '#06090E',
+                        obsidian: '#0A0F18',
+                        panel: 'rgba(13, 20, 33, 0.72)',
+                        mint: {
+                            DEFAULT: '#00F5A0',
+                            500: '#10B981',
+                            glow: 'rgba(0, 245, 160, 0.25)'
+                        },
+                        cyan: {
+                            DEFAULT: '#00D9F5',
+                            glow: 'rgba(0, 217, 245, 0.25)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            color-scheme: dark;
+        }
+        body {
+            background-color: #06090E;
+            color: #E2E8F0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        /* Subtle Cyber Grid Background */
+        .bg-cyber-grid {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(0, 245, 160, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 217, 245, 0.04) 1px, transparent 1px);
+        }
+        /* Glassmorphism Panels */
+        .glass-panel {
+            background: rgba(10, 15, 24, 0.72);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-panel-mint {
+            background: rgba(10, 15, 24, 0.78);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 245, 160, 0.28);
+            box-shadow: 0 0 35px -10px rgba(0, 245, 160, 0.18);
+        }
+        /* Classic Windows 98 / XP Nostalgic Popup Styling */
+        .win98-modal {
+            background: #D4D0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #404040;
+            border-bottom: 2px solid #404040;
+            box-shadow: inset 1px 1px 0px #DFDFDF, inset -1px -1px 0px #808080, 0 25px 50px -12px rgba(0, 0, 0, 0.85);
+            color: #000000;
+            font-family: 'Tahoma', 'MS Sans Serif', sans-serif;
+        }
+        .win98-titlebar {
+            background: linear-gradient(90deg, #0A246A 0%, #A6CAF0 100%);
+            color: #FFFFFF;
+            font-weight: bold;
+            font-size: 12px;
+            padding: 3px 6px;
+        }
+        .win98-btn {
+            background: #D4D0C8;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+            border-right: 1px solid #404040;
+            border-bottom: 1px solid #404040;
+            box-shadow: inset -1px -1px 0px #808080;
+            color: #000;
+            font-size: 11px;
+            padding: 4px 12px;
+            cursor: pointer;
+        }
+        .win98-btn:active {
+            border-top: 1px solid #404040;
+            border-left: 1px solid #404040;
+            border-right: 1px solid #FFFFFF;
+            border-bottom: 1px solid #FFFFFF;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #06090E;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E293B;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00F5A0;
+        }
+        /* Range Input Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            height: 6px;
+            border-radius: 3px;
+            background: #1E293B;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #00F5A0;
+            margin-top: -5px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 245, 160, 0.8);
+        }
+        /* Shatter Particle Animation */
+        .shatter-shard {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.85s ease-out;
+        }
+        #webgl-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-void text-slate-200 selection:bg-mint selection:text-void relative">
+
+    <!-- Three.js 3D WebGL Background Canvas -->
+    <canvas id="webgl-canvas"></canvas>
+
+    <!-- Toast Notification Container (No alert() used) -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+    <!-- Extension Guide Modal -->
+    <div id="extension-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-panel-mint max-w-lg w-full rounded-2xl p-6 space-y-5 border border-mint/40 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-mint/15 text-mint flex items-center justify-center">
+                        <i data-lucide="puzzle" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-display font-bold text-white text-base">Install Chrome Extension</h3>
+                        <p class="text-xs text-slate-400 font-mono">CyberDM Chrome Companion v1.0.1</p>
+                    </div>
+                </div>
+                <button onclick="toggleExtensionModal()" class="text-slate-400 hover:text-white font-mono text-sm px-2 py-1">✕</button>
+            </div>
+
+            <div class="space-y-3 text-xs text-slate-300">
+                <div class="flex items-start gap-3 p-3 rounded-xl bg-void/80 border border-white/10">
+                    <span class="w-6 h-6 rounded-full bg-mint text-void font-bold flex items-center justify-center shrink-0">1</span>
+                    <div>
+                        <strong class="text-white block mb-0.5">Download & Extract</strong>
+                        Download <code class="text-mint font-mono">CyberDM-Chrome-Extension-1.0.1.zip</code> and unzip it to any persistent folder on your PC.
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3 p-3 rounded-xl bg-void/80 border border-white/10">
+                    <span class="w-6 h-6 rounded-full bg-cyan text-void font-bold flex items-center justify-center shrink-0">2</span>
+                    <div>
+                        <strong class="text-white block mb-0.5">Open Extensions Settings</strong>
+                        Open Chrome/Edge, navigate to <code class="text-cyan font-mono select-all">chrome://extensions</code> and turn on <strong>Developer mode</strong> (top-right toggle).
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3 p-3 rounded-xl bg-void/80 border border-white/10">
+                    <span class="w-6 h-6 rounded-full bg-emerald-400 text-void font-bold flex items-center justify-center shrink-0">3</span>
+                    <div>
+                        <strong class="text-white block mb-0.5">Load Unpacked</strong>
+                        Click <strong>Load unpacked</strong> and select the extracted extension folder. CyberDM is now seamlessly integrated with your browser!
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-3 pt-2 border-t border-white/10">
+                <a href="https://github.com/CyberPrince-glitch/CyberDM/releases/download/v1.0.4/CyberDM-Chrome-Extension-1.0.1.zip" onclick="triggerDownloadArtifact('CyberDM-Chrome-Extension-1.0.1.zip', 'Extension Package')" class="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-mint to-cyan text-void font-display font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-mint/20 hover:opacity-95 transition">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    <span>Download Extension (.zip)</span>
+                </a>
+                <button onclick="toggleExtensionModal()" class="px-4 py-2.5 rounded-xl glass-panel text-slate-300 hover:text-white font-mono text-xs transition">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-40 glass-panel border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-mint to-cyan p-[1px] shadow-lg shadow-mint/20">
+                    <div class="w-full h-full bg-void rounded-[11px] flex items-center justify-center">
+                        <i data-lucide="zap" class="w-5 h-5 text-mint group-hover:scale-110 transition-transform"></i>
+                    </div>
+                </div>
+                <div class="flex flex-col">
+                    <div class="flex items-center gap-2">
+                        <span class="font-display font-bold text-lg tracking-tight text-white">Cyber<span class="text-mint">DM</span></span>
+                        <span class="font-mono text-[10px] font-semibold px-1.5 py-0.5 rounded bg-mint/15 text-mint border border-mint/30">v1.0.4</span>
+                    </div>
+                    <span class="text-[10px] font-mono text-slate-400 hidden sm:inline">MIT Open-Source Engine</span>
+                </div>
+            </a>
+
+            <!-- Desktop Navigation Links -->
+            <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
+                <a href="#remotion-showcase" class="hover:text-mint transition-colors">Motion Engine</a>
+                <a href="#live-simulator" class="hover:text-mint transition-colors">Live App Simulator</a>
+                <a href="#roast-arena" class="hover:text-mint transition-colors">IDM Roast</a>
+                <a href="#architecture" class="hover:text-mint transition-colors">v1.0.4 Specs</a>
+                <a href="#dev-quickstart" class="hover:text-mint transition-colors">Build / CLI</a>
+                <a href="https://github.com/CyberPrince-glitch/CyberDM" target="_blank" class="hover:text-cyan transition-colors flex items-center gap-1 font-mono text-xs text-slate-400">
+                    <i data-lucide="github" class="w-3.5 h-3.5"></i>
+                    <span>GitHub Repo</span>
+                </a>
+            </nav>
+
+            <!-- Controls & Action Buttons -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- 3D WebGL Vortex Toggle -->
+                <button id="toggle-3d-btn" onclick="toggle3DVortex()" class="px-2.5 py-1.5 rounded-lg glass-panel hover:border-mint/40 text-xs font-mono text-slate-300 flex items-center gap-1.5 transition" title="Toggle Three.js 3D Particle Acceleration">
+                    <span id="vortex-dot" class="w-2 h-2 rounded-full bg-mint animate-pulse"></span>
+                    <span class="hidden sm:inline" id="vortex-label">3D Core: HIGH</span>
+                </button>
+
+                <!-- Trigger Nostalgic IDM Popup Easter Egg -->
+                <button onclick="summonIDMTrauma()" class="px-2.5 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-mono flex items-center gap-1.5 transition">
+                    <i data-lucide="skull" class="w-3.5 h-3.5"></i>
+                    <span class="hidden lg:inline">Simulate IDM Trauma</span>
+                </button>
+
+                <!-- Direct Download EXE CTA -->
+                <a href="https://github.com/CyberPrince-glitch/CyberDM/releases/download/v1.0.4/CyberDM.1.0.4.exe" onclick="triggerDownloadArtifact('CyberDM.1.0.4.exe', 'Windows 64-bit')" class="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-mint to-cyan text-void font-display font-bold text-xs sm:text-sm hover:opacity-95 transition shadow-lg shadow-mint/20 flex items-center gap-1.5">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                    <span>Download App</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="relative z-10 bg-cyber-grid">
+
+        <!-- HERO SECTION + FLOATING IDM DESTROYER -->
+        <section class="relative pt-12 pb-20 md:pt-20 md:pb-28 overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                    
+                    <!-- Left Column: Hero Copy & Download CTAs -->
+                    <div class="lg:col-span-7 space-y-6 text-left">
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass-panel border border-mint/30 text-xs font-mono text-mint">
+                            <span class="px-1.5 py-0.5 rounded bg-mint text-void font-bold">NEW</span>
+                            <span>v1.0.4 Duplicate Capture Protection & Instant Splash Ready</span>
+                        </div>
+
+                        <h1 class="font-display font-bold text-4xl sm:text-5xl xl:text-6xl tracking-tight text-white leading-[1.08]">
+                            RIP 30-Day Trials.<br>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-mint via-cyan to-emerald-400">Fake Serial Keys Are Dead.</span>
+                        </h1>
+
+                        <p class="text-slate-300 text-base sm:text-lg max-w-2xl leading-relaxed font-normal">
+                            Meet <strong class="text-white font-semibold">CyberDM 1.0.4</strong> — the free, uncapped Windows desktop download manager and Manifest V3 browser companion built with Electron. 8-thread HTTP 206 byte-range acceleration, bundled <code class="font-mono text-mint bg-white/5 px-1.5 py-0.5 rounded text-sm">yt-dlp 2026.08.19</code> 4K video engine, and zero dropped Chrome downloads.
+                        </p>
+
+                        <!-- Primary Download Buttons -->
+                        <div class="flex flex-wrap items-center gap-3 pt-2">
+                            <!-- Direct EXE Download -->
+                            <a href="https://github.com/CyberPrince-glitch/CyberDM/releases/download/v1.0.4/CyberDM.1.0.4.exe" onclick="triggerDownloadArtifact('CyberDM.1.0.4.exe', 'Windows 64-bit App')" class="px-6 py-3.5 rounded-xl bg-gradient-to-r from-mint to-cyan text-void font-display font-bold text-sm sm:text-base flex items-center gap-2.5 shadow-xl shadow-mint/25 hover:scale-[1.02] active:scale-[0.99] transition">
+                                <i data-lucide="download" class="w-5 h-5"></i>
+                                <span>Download CyberDM (.exe) — v1.0.4</span>
+                            </a>
+
+                            <!-- Chrome Extension Modal Trigger -->
+                            <button onclick="toggleExtensionModal()" class="px-5 py-3.5 rounded-xl glass-panel hover:border-mint/50 text-white font-display font-semibold text-sm sm:text-base flex items-center gap-2 transition">
+                                <i data-lucide="puzzle" class="w-4 h-4 text-cyan"></i>
+                                <span>Chrome Extension (.zip)</span>
+                            </button>
+
+                            <!-- GitHub Source Link -->
+                            <a href="https://github.com/CyberPrince-glitch/CyberDM" target="_blank" class="px-4 py-3.5 rounded-xl glass-panel hover:border-white/30 text-slate-300 font-mono text-xs sm:text-sm flex items-center gap-2 transition">
+                                <i data-lucide="github" class="w-4 h-4 text-mint"></i>
+                                <span>GitHub (v1.0.4)</span>
+                            </a>
+                        </div>
+
+                        <!-- Telemetry Strip -->
+                        <div class="pt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 border-t border-white/10">
+                            <div class="glass-panel p-3 rounded-xl">
+                                <div class="text-xs font-mono text-slate-400">PRICE / TIER</div>
+                                <div class="font-display font-bold text-lg text-mint">$0.00 Forever</div>
+                            </div>
+                            <div class="glass-panel p-3 rounded-xl">
+                                <div class="text-xs font-mono text-slate-400">HTTP ENGINE</div>
+                                <div class="font-display font-bold text-lg text-white">4–8 Byte Threads</div>
+                            </div>
+                            <div class="glass-panel p-3 rounded-xl">
+                                <div class="text-xs font-mono text-slate-400">MEDIA CORE</div>
+                                <div class="font-display font-bold text-lg text-cyan">yt-dlp 2026.08</div>
+                            </div>
+                            <div class="glass-panel p-3 rounded-xl">
+                                <div class="text-xs font-mono text-slate-400">CHROME BRIDGE</div>
+                                <div class="font-display font-bold text-lg text-emerald-400">Ack Safe Shim</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Interactive Viral Gimmick ("Kill the Legacy IDM Popup") -->
+                    <div class="lg:col-span-5 relative flex items-center justify-center">
+                        
+                        <!-- Container that swaps between Legacy Trauma & Reborn CyberDM Card -->
+                        <div id="trauma-stage" class="w-full max-w-md relative">
+                            
+                            <!-- 1. NOSTALGIC WINDOWS 98/XP FAKE SERIAL MODAL -->
+                            <div id="legacy-idm-popup" class="win98-modal rounded-none p-1 transition-all duration-300 animate-float">
+                                <div class="win98-titlebar flex items-center justify-between">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="inline-block w-3.5 h-3.5 bg-red-600 text-white text-[10px] leading-3 text-center font-mono">!</span>
+                                        <span>Internet Download Manager - Trial Expired</span>
+                                    </div>
+                                    <button onclick="shatterLegacyPopup()" class="win98-btn !px-1.5 !py-0 font-bold">X</button>
+                                </div>
+                                <div class="p-4 space-y-3 text-xs">
+                                    <div class="flex items-start gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-red-700 text-white flex items-center justify-center font-bold text-xl shrink-0 border-2 border-white shadow">
+                                            X
+                                        </div>
+                                        <div class="space-y-1.5 text-black">
+                                            <p class="font-bold text-red-800">Fake Serial Number Detected! (Error 1999)</p>
+                                            <p class="leading-snug">Your 30-day evaluation period has expired. IDM has been registered with a counterfeit key downloaded from a sketchy forum.</p>
+                                            <p class="text-[11px] text-neutral-700 font-mono bg-white p-1.5 border border-neutral-500">
+                                                Status: Exiting browser capture & dropping your 84% 12GB download...
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-2 gap-2 pt-1">
+                                        <button onclick="nudgePopup()" class="win98-btn">Pay $29.95 Now</button>
+                                        <button onclick="nudgePopup()" class="win98-btn">Run Sketchy_Patch.bat</button>
+                                    </div>
+
+                                    <!-- Viral Action Button: Shatter with CyberDM -->
+                                    <div class="pt-2 border-t border-neutral-400">
+                                        <button onclick="shatterLegacyPopup()" class="w-full py-2.5 px-4 rounded bg-gradient-to-r from-emerald-500 to-cyan-500 text-black font-display font-bold text-xs uppercase tracking-wider shadow-lg hover:brightness-110 flex items-center justify-center gap-2 transition">
+                                            <i data-lucide="flame" class="w-4 h-4 fill-current"></i>
+                                            <span>Shatter Legacy Popup with CyberDM</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. REBORN CYBERDM DARK GLASS CARD (Revealed after shattering) -->
+                            <div id="reborn-cyberdm-card" class="hidden glass-panel-mint rounded-2xl p-5 space-y-4">
+                                <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="w-3 h-3 rounded-full bg-mint animate-ping"></div>
+                                        <span class="font-display font-bold text-white text-sm">CyberDM 1.0.4 Native Engine Active</span>
+                                    </div>
+                                    <span class="font-mono text-[11px] px-2 py-0.5 rounded bg-mint/20 text-mint">MIT LICENSED</span>
+                                </div>
+
+                                <div class="space-y-2.5 font-mono text-xs">
+                                    <div class="p-3 rounded-xl bg-void/90 border border-white/10 space-y-2">
+                                        <div class="flex justify-between text-slate-300">
+                                            <span>win11_26H2_dev_x64.iso</span>
+                                            <span class="text-mint font-bold">94.8 MB/s</span>
+                                        </div>
+                                        <!-- 8 Thread Bars -->
+                                        <div class="grid grid-cols-8 gap-1">
+                                            <div class="h-2 rounded-sm bg-mint animate-pulse"></div>
+                                            <div class="h-2 rounded-sm bg-mint"></div>
+                                            <div class="h-2 rounded-sm bg-cyan animate-pulse"></div>
+                                            <div class="h-2 rounded-sm bg-mint"></div>
+                                            <div class="h-2 rounded-sm bg-cyan"></div>
+                                            <div class="h-2 rounded-sm bg-mint animate-pulse"></div>
+                                            <div class="h-2 rounded-sm bg-mint"></div>
+                                            <div class="h-2 rounded-sm bg-cyan"></div>
+                                        </div>
+                                        <div class="flex justify-between text-[10px] text-slate-400">
+                                            <span>HTTP 206 Byte-Range (8/8 Threads)</span>
+                                            <span>ETag Verified • Zero Nag Screens</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between pt-1">
+                                    <span class="text-xs text-slate-400">Popup trauma permanently cured.</span>
+                                    <button onclick="summonIDMTrauma()" class="text-xs font-mono text-mint hover:underline flex items-center gap-1">
+                                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Replay Shatter
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- REMOTION-STYLE PROGRAMMATIC MOTION PLAYER SHOWCASE -->
+        <section id="remotion-showcase" class="py-16 md:py-24 border-t border-white/10 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+                
+                <!-- Section Header -->
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-2 text-xs font-mono text-cyan uppercase tracking-widest mb-2">
+                            <i data-lucide="film" class="w-4 h-4"></i>
+                            <span>Programmatic Motion Inspection • 60 FPS</span>
+                        </div>
+                        <h2 class="font-display font-bold text-3xl sm:text-4xl text-white">
+                            Under the Hood: <span class="text-mint">How CyberDM Dominates</span>
+                        </h2>
+                    </div>
+                    <!-- Scene Selector Tabs -->
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="selectRemotionScene(0)" id="scene-tab-0" class="px-3.5 py-2 rounded-xl font-mono text-xs font-semibold transition bg-mint text-void">
+                            01. 8-Thread Byte Split
+                        </button>
+                        <button onclick="selectRemotionScene(1)" id="scene-tab-1" class="px-3.5 py-2 rounded-xl font-mono text-xs font-semibold transition glass-panel text-slate-300 hover:border-mint/40">
+                            02. Safe Native Shim Bridge
+                        </button>
+                        <button onclick="selectRemotionScene(2)" id="scene-tab-2" class="px-3.5 py-2 rounded-xl font-mono text-xs font-semibold transition glass-panel text-slate-300 hover:border-mint/40">
+                            03. yt-dlp 4K Media Pipeline
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Remotion Player Frame -->
+                <div class="glass-panel-mint rounded-2xl overflow-hidden border border-mint/30 shadow-2xl">
+                    <!-- Top Studio Telemetry Bar -->
+                    <div class="bg-void/90 px-4 py-2.5 border-b border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+                        <div class="flex items-center gap-3">
+                            <div class="flex gap-1.5">
+                                <span class="w-2.5 h-2.5 rounded-full bg-rose-500/80"></span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-amber-400/80"></span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400/80"></span>
+                            </div>
+                            <span class="text-slate-400">Composition:</span>
+                            <span id="remotion-comp-title" class="text-mint font-semibold">ByteRangeChunkEngine.tsx</span>
+                        </div>
+                        <div class="flex items-center gap-4 text-slate-400">
+                            <span>1920×1080 • 60 FPS</span>
+                            <span class="px-2 py-0.5 rounded bg-white/5 text-cyan" id="remotion-frame-readout">FRAME 000 / 360</span>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Motion Viewport -->
+                    <div class="relative bg-gradient-to-b from-void via-obsidian to-void min-h-[340px] sm:min-h-[380px] p-6 sm:p-10 flex flex-col justify-center">
+                        
+                        <!-- SCENE 0: 8-THREAD BYTE-RANGE SPLITTING -->
+                        <div id="remotion-scene-0" class="space-y-6">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-4">
+                                <div>
+                                    <span class="text-xs font-mono text-mint uppercase">HTTP/1.1 206 Partial Content • ETag Validated</span>
+                                    <h3 class="font-display font-bold text-xl text-white">Target: <code class="text-cyan font-mono">unreal-engine-5.5-win64.iso (4.20 GB)</code></h3>
+                                </div>
+                                <div class="font-mono text-right">
+                                    <span class="text-xs text-slate-400 block">MERGED OUTPUT STATUS</span>
+                                    <span id="scene0-status-badge" class="text-sm font-bold text-mint">SPLITTING INTO 8 BYTE RANGES...</span>
+                                </div>
+                            </div>
+
+                            <!-- 8 Animated Chunk Lanes -->
+                            <div id="scene0-chunks-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 font-mono text-xs">
+                                <!-- Populated and updated at 60fps by JS -->
+                            </div>
+
+                            <!-- Final Sibling Temp File Verification Bar -->
+                            <div class="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                                <div class="flex items-center gap-2.5 text-xs font-mono">
+                                    <i data-lucide="shield-check" class="w-4 h-4 text-mint shrink-0"></i>
+                                    <span class="text-slate-300">Crash-safe reconciliation: verifies on-disk chunk lengths before renaming <code class="text-mint">.part</code> sibling file.</span>
+                                </div>
+                                <span id="scene0-total-bytes" class="font-mono text-xs text-cyan font-bold shrink-0">0.00 / 4.20 GB</span>
+                            </div>
+                        </div>
+
+                        <!-- SCENE 1: SAFE BROWSER NATIVE BRIDGE -->
+                        <div id="remotion-scene-1" class="hidden space-y-6">
+                            <div class="text-center max-w-2xl mx-auto space-y-1">
+                                <span class="text-xs font-mono text-cyan uppercase">Zero Dropped Chrome Downloads Architecture</span>
+                                <h3 class="font-display font-bold text-xl text-white">Idempotent Framed Stdio Handoff (<code class="text-mint font-mono">native-host-shim.exe</code>)</h3>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center pt-2">
+                                <!-- Node 1: Chrome MV3 -->
+                                <div id="shim-node-1" class="p-4 rounded-xl glass-panel border border-white/15 space-y-2 transition-all">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-mono text-xs text-cyan font-bold">01. CHROME MV3 EXT</span>
+                                        <i data-lucide="globe" class="w-4 h-4 text-cyan"></i>
+                                    </div>
+                                    <p class="text-xs text-slate-300">Intercepts download event & attaches stable client Request ID + opt-in encrypted origin cookie.</p>
+                                    <div class="text-[11px] font-mono p-2 rounded bg-void text-mint" id="shim-step1-log">Waiting for click...</div>
+                                </div>
+
+                                <!-- Node 2: Native Host Shim -->
+                                <div id="shim-node-2" class="p-4 rounded-xl glass-panel border border-white/15 space-y-2 transition-all">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-mono text-xs text-mint font-bold">02. NATIVE-HOST-SHIM.EXE</span>
+                                        <i data-lucide="cpu" class="w-4 h-4 text-mint"></i>
+                                    </div>
+                                    <p class="text-xs text-slate-300">Receives Chromium stdio outside Electron. Keeps signed URLs out of CLI args via LocalAppData file IPC.</p>
+                                    <div class="text-[11px] font-mono p-2 rounded bg-void text-cyan" id="shim-step2-log">Stdio Pipe Idle</div>
+                                </div>
+
+                                <!-- Node 3: CyberDM Engine Ack -->
+                                <div id="shim-node-3" class="p-4 rounded-xl glass-panel border border-white/15 space-y-2 transition-all">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-mono text-xs text-emerald-400 font-bold">03. CYBERDM ENGINE ACK</span>
+                                        <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+                                    </div>
+                                    <p class="text-xs text-slate-300">Chrome only cancels its own download <strong>after</strong> CyberDM probes the URL and returns an ACK.</p>
+                                    <div class="text-[11px] font-mono p-2 rounded bg-void text-emerald-400" id="shim-step3-log">Fallback Protected</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SCENE 2: BUILT-IN YT-DLP 2026.08.19 STREAM ENGINE -->
+                        <div id="remotion-scene-2" class="hidden space-y-6">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
+                                <div>
+                                    <span class="text-xs font-mono text-mint uppercase">Pinned Release: yt-dlp 2026.08.19</span>
+                                    <h3 class="font-display font-bold text-xl text-white">Direct HTTPS Stream Selection & Temp Netscape Cookie Jar</h3>
+                                </div>
+                                <span id="ytdlp-stage-pill" class="font-mono text-xs px-3 py-1 rounded-full bg-cyan/15 text-cyan border border-cyan/30">PROBING MANIFEST...</span>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-xs">
+                                <div class="p-4 rounded-xl bg-void/90 border border-white/10 space-y-2.5">
+                                    <div class="text-slate-400 flex justify-between">
+                                        <span>STREAM PARSER TELEMETRY</span>
+                                        <span class="text-mint">HTTPS PREFERRED</span>
+                                    </div>
+                                    <div id="ytdlp-terminal-lines" class="space-y-1.5 text-[11px] text-slate-300">
+                                        <!-- Updated dynamically by Remotion timeline -->
+                                    </div>
+                                </div>
+
+                                <div class="p-4 rounded-xl bg-void/90 border border-white/10 flex flex-col justify-between space-y-3">
+                                    <div class="space-y-1">
+                                        <span class="text-slate-400 text-[11px]">SELECTED STREAM CONTAINER</span>
+                                        <div class="text-white font-bold text-sm">Cyberpunk_2077_PathTracing_4K60.mp4</div>
+                                        <div class="text-mint text-[11px]">Format 315 (2160p60 HDR) + Format 251 (Opus Audio)</div>
+                                    </div>
+                                    <div class="space-y-1.5">
+                                        <div class="flex justify-between text-[11px]">
+                                            <span class="text-slate-400">MACHINE-PARSED PROGRESS</span>
+                                            <span id="ytdlp-pct-text" class="text-cyan font-bold">0%</span>
+                                        </div>
+                                        <div class="w-full h-2.5 rounded-full bg-slate-800 overflow-hidden">
+                                            <div id="ytdlp-bar" class="h-full bg-gradient-to-r from-mint to-cyan transition-all duration-75" style="width: 0%"></div>
+                                        </div>
+                                        <div class="text-[10px] text-slate-400 flex justify-between">
+                                            <span>Temp Cookie Jar: Auto-shredded on exit</span>
+                                            <span>Pause/Resume preserves .part file</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Bottom Remotion Timeline Controls -->
+                    <div class="bg-void/95 px-4 py-3 border-t border-white/10 flex items-center gap-4">
+                        <button onclick="toggleRemotionPlay()" id="remotion-play-btn" class="w-9 h-9 rounded-lg bg-mint text-void flex items-center justify-center hover:opacity-90 transition shrink-0">
+                            <i data-lucide="pause" class="w-4 h-4"></i>
+                        </button>
+                        <div class="flex-1 flex items-center gap-3">
+                            <span id="remotion-time-cur" class="font-mono text-xs text-mint w-12">00:00</span>
+                            <input id="remotion-scrubber" type="range" min="0" max="360" value="0" oninput="scrubRemotion(this.value)" class="w-full">
+                            <span class="font-mono text-xs text-slate-400 w-12 text-right">06:00</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- INTERACTIVE LIVE CYBERDM 1.0.4 DESKTOP APP SIMULATOR -->
+        <section id="live-simulator" class="py-16 md:py-24 border-t border-white/10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+                
+                <!-- Header -->
+                <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-2 text-xs font-mono text-mint uppercase tracking-widest mb-2">
+                            <i data-lucide="terminal" class="w-4 h-4"></i>
+                            <span>Interactive Sandbox • Try CyberDM 1.0.4 in Your Browser</span>
+                        </div>
+                        <h2 class="font-display font-bold text-3xl sm:text-4xl text-white">
+                            Live Desktop Engine <span class="text-cyan">Simulator</span>
+                        </h2>
+                        <p class="text-slate-400 text-sm sm:text-base mt-1">
+                            Test v1.0.4 Duplicate Capture Protection, adjust HTTP thread counts (4–8), toggle the Scheduled Speed Cap, or pause/resume jobs in real time.
+                        </p>
+                    </div>
+
+                    <!-- Simulator Quick Actions -->
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <button onclick="simAddTestDownload()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-mint to-cyan text-void font-display font-bold text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-mint/20 hover:opacity-95 transition">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                            <span>+ Add Test Download</span>
+                        </button>
+                        <button onclick="simTestDuplicateCapture()" class="px-3.5 py-2.5 rounded-xl glass-panel hover:border-mint/50 text-mint font-mono text-xs flex items-center gap-1.5 transition" title="Test v1.0.4 Duplicate Capture Protection">
+                            <i data-lucide="copy-check" class="w-4 h-4"></i>
+                            <span>Test v1.0.4 Duplicate Guard</span>
+                        </button>
+                        <button onclick="simToggleQueueMaster()" id="sim-queue-master-btn" class="px-3.5 py-2.5 rounded-xl glass-panel hover:border-cyan/50 text-slate-200 font-mono text-xs flex items-center gap-1.5 transition">
+                            <i data-lucide="play" class="w-4 h-4 text-mint"></i>
+                            <span id="sim-queue-master-text">Queue: RUNNING</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Simulated Electron Desktop Window -->
+                <div class="glass-panel rounded-2xl border border-white/15 shadow-2xl overflow-hidden">
+                    
+                    <!-- Window Titlebar -->
+                    <div class="bg-void/95 px-4 py-3 border-b border-white/10 flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <div class="flex gap-1.5">
+                                <span class="w-3 h-3 rounded-full bg-rose-500/80"></span>
+                                <span class="w-3 h-3 rounded-full bg-amber-400/80"></span>
+                                <span class="w-3 h-3 rounded-full bg-emerald-400/80"></span>
+                            </div>
+                            <span class="font-display font-bold text-sm text-white flex items-center gap-2">
+                                <i data-lucide="zap" class="w-4 h-4 text-mint"></i>
+                                CyberDM 1.0.4 — Electron Main Window
+                            </span>
+                            <span class="hidden sm:inline-block font-mono text-[11px] px-2 py-0.5 rounded bg-white/5 text-slate-400">Single-Instance Lock: ACTIVE</span>
+                        </div>
+
+                        <!-- Thread Slider & Speed Cap Controls -->
+                        <div class="flex flex-wrap items-center gap-4 text-xs font-mono">
+                            <div class="flex items-center gap-2">
+                                <span class="text-slate-400">HTTP Threads:</span>
+                                <input type="range" min="4" max="8" value="8" id="sim-thread-slider" oninput="updateSimThreads(this.value)" class="w-20">
+                                <span id="sim-thread-val" class="text-mint font-bold w-4">8</span>
+                            </div>
+
+                            <button onclick="toggleSimSpeedCap()" id="sim-cap-btn" class="px-2.5 py-1 rounded bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition">
+                                Speed Cap: <span id="sim-cap-state" class="text-mint">UNCAPPED</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- App Body: Sidebar + Main Download List -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 min-h-[420px]">
+                        
+                        <!-- Left Category Filter Sidebar -->
+                        <div class="lg:col-span-3 bg-void/60 border-b lg:border-b-0 lg:border-r border-white/10 p-4 flex flex-col justify-between space-y-6">
+                            <div class="space-y-1.5">
+                                <div class="text-[11px] font-mono text-slate-400 uppercase px-2 mb-2">Shared Job Queue</div>
+                                <button onclick="filterSimCategory('all')" id="cat-btn-all" class="w-full px-3 py-2 rounded-xl bg-mint/15 text-mint border border-mint/30 font-medium text-xs flex items-center justify-between">
+                                    <span class="flex items-center gap-2"><i data-lucide="layers" class="w-4 h-4"></i> All Transfers</span>
+                                    <span id="count-all" class="font-mono">3</span>
+                                </button>
+                                <button onclick="filterSimCategory('http')" id="cat-btn-http" class="w-full px-3 py-2 rounded-xl hover:bg-white/5 text-slate-300 font-medium text-xs flex items-center justify-between transition">
+                                    <span class="flex items-center gap-2"><i data-lucide="hard-drive-download" class="w-4 h-4 text-cyan"></i> HTTP 206 Range</span>
+                                    <span class="font-mono text-slate-400">ISO/ZIP</span>
+                                </button>
+                                <button onclick="filterSimCategory('video')" id="cat-btn-video" class="w-full px-3 py-2 rounded-xl hover:bg-white/5 text-slate-300 font-medium text-xs flex items-center justify-between transition">
+                                    <span class="flex items-center gap-2"><i data-lucide="video" class="w-4 h-4 text-mint"></i> yt-dlp Media</span>
+                                    <span class="font-mono text-slate-400">4K/MP4</span>
+                                </button>
+                                <button onclick="filterSimCategory('torrent')" id="cat-btn-torrent" class="w-full px-3 py-2 rounded-xl hover:bg-white/5 text-slate-300 font-medium text-xs flex items-center justify-between transition">
+                                    <span class="flex items-center gap-2"><i data-lucide="share-2" class="w-4 h-4 text-emerald-400"></i> BitTorrent</span>
+                                    <span class="font-mono text-slate-400">P2P</span>
+                                </button>
+                            </div>
+
+                            <!-- Native Bridge Status Box -->
+                            <div class="p-3 rounded-xl bg-white/[0.03] border border-white/10 space-y-2 font-mono text-[11px]">
+                                <div class="flex items-center justify-between text-slate-300">
+                                    <span>MV3 Extension Bridge</span>
+                                    <span class="w-2 h-2 rounded-full bg-mint"></span>
+                                </div>
+                                <div class="text-slate-400 leading-relaxed">
+                                    In-flight burst cap: <span class="text-white">2 active / 6 queued</span>. Cookie jar: <span class="text-mint">AES-Local</span>.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Main Queue & Live Graph -->
+                        <div class="lg:col-span-9 p-4 sm:p-6 flex flex-col justify-between space-y-6 bg-obsidian/50">
+                            
+                            <!-- Dynamic Download Rows Container -->
+                            <div id="sim-downloads-list" class="space-y-3">
+                                <!-- Rendered by JavaScript -->
+                            </div>
+
+                            <!-- Bottom Live Real-Time Bandwidth Speed Graph -->
+                            <div class="pt-4 border-t border-white/10 space-y-2">
+                                <div class="flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full bg-mint animate-ping"></span>
+                                        <span class="text-slate-400">REAL-TIME AGGREGATE BANDWIDTH TELEMETRY</span>
+                                    </div>
+                                    <div class="flex items-center gap-4">
+                                        <span class="text-slate-400">Active Jobs: <strong id="sim-active-count" class="text-white">3</strong>/4</span>
+                                        <span class="text-mint font-bold text-sm" id="sim-total-speed-readout">142.4 MB/s</span>
+                                    </div>
+                                </div>
+                                <div class="h-24 w-full rounded-xl bg-void/90 border border-white/10 p-2 relative overflow-hidden">
+                                    <canvas id="speed-graph-canvas" class="w-full h-full block"></canvas>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- THE SAVAGE ROAST COMPARISON TABLE (IDM vs CyberDM 1.0.4) -->
+        <section id="roast-arena" class="py-16 md:py-24 border-t border-white/10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+                
+                <div class="text-center max-w-3xl mx-auto space-y-3">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-mono">
+                        <i data-lucide="flame" class="w-3.5 h-3.5"></i>
+                        <span>Brutally Honest Side-by-Side Comparison</span>
+                    </div>
+                    <h2 class="font-display font-bold text-3xl sm:text-5xl text-white">
+                        Why Live in 1999 When <span class="text-mint">CyberDM is Free?</span>
+                    </h2>
+                    <p class="text-slate-400 text-sm sm:text-base">
+                        We used the legacy dinosaur as a behavior reference—then threw away the nag screens, Windows 98 grey buttons, and silent download drops.
+                    </p>
+                </div>
+
+                <!-- Roast Comparison Table -->
+                <div class="glass-panel rounded-2xl border border-white/15 overflow-hidden shadow-2xl">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-white/10 bg-void/90 font-mono text-xs uppercase">
+                                    <th class="py-4 px-6 text-slate-400">Workflow / Feature</th>
+                                    <th class="py-4 px-6 text-rose-400 bg-rose-950/15 border-x border-white/10">Legacy IDM (The 1999 Dinosaur)</th>
+                                    <th class="py-4 px-6 text-mint bg-mint/5">CyberDM 1.0.4 (Dark Glass & Mint)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/10 text-sm">
+                                <tr>
+                                    <td class="py-4 px-6 font-display font-semibold text-white">Licensing & Price</td>
+                                    <td class="py-4 px-6 text-slate-300 bg-rose-950/10 border-x border-white/10">
+                                        30-day trial anxiety, aggressive "Fake Serial Key" popups, or disabling Windows Defender to run shady crack scripts.
+                                    </td>
+                                    <td class="py-4 px-6 text-slate-100 bg-mint/5 font-medium">
+                                        <span class="text-mint font-bold">100% Free Forever (MIT License).</span> Zero trial timers, zero speed tiers, and legacy server code is completely excluded from packaging.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-4 px-6 font-display font-semibold text-white">Visual Interface</td>
+                                    <td class="py-4 px-6 text-slate-300 bg-rose-950/10 border-x border-white/10">
+                                        Beige Windows 98 / XP dialog boxes that flashbang your retinas at 2:00 AM.
+                                    </td>
+                                    <td class="py-4 px-6 text-slate-100 bg-mint/5 font-medium">
+                                        Sleek <span class="text-cyan">Dark Glass & Mint</span> UI with instant first-ready-frame splash transition (v1.0.3) and live bandwidth telemetry.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-4 px-6 font-display font-semibold text-white">Browser Capture Safety</td>
+                                    <td class="py-4 px-6 text-slate-300 bg-rose-950/10 border-x border-white/10">
+                                        Cancels Chrome's download immediately—if the desktop app fails to launch, your download evaporates into thin air.
+                                    </td>
+                                    <td class="py-4 px-6 text-slate-100 bg-mint/5 font-medium">
+                                        <span class="text-mint font-bold">Acknowledged Native Bridge:</span> Chrome keeps its download unless <code class="font-mono text-xs text-cyan">native-host-shim.exe</code> confirms CyberDM probed and accepted the URL.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-4 px-6 font-display font-semibold text-white">Duplicate Link Clicks</td>
+                                    <td class="py-4 px-6 text-slate-300 bg-rose-950/10 border-x border-white/10">
+                                        Spams duplicate <code class="font-mono text-xs">file(1).zip</code>, <code class="font-mono text-xs">file(2).zip</code> modal prompts every time you accidentally double-click.
+                                    </td>
+                                    <td class="py-4 px-6 text-slate-100 bg-mint/5 font-medium">
+                                        <span class="text-mint font-bold">v1.0.4 Duplicate Capture Protection:</span> Reuses active/queued jobs, automatically resumes paused/failed jobs, and skips already-completed files on disk.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-4 px-6 font-display font-semibold text-white">4K Video & Audio Grabbing</td>
+                                    <td class="py-4 px-6 text-slate-300 bg-rose-950/10 border-x border-white/10">
+                                        Proprietary parser breaks whenever video sites update their player; often grabs low-res fragmented HLS streams.
+                                    </td>
+                                    <td class="py-4 px-6 text-slate-100 bg-mint/5 font-medium">
+                                        Bundled <span class="text-cyan font-mono">yt-dlp 2026.08.19</span> engine prefers direct HTTPS formats over HLS, supports audio-only extraction, and never downloads raw watch HTML pages.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-4 px-6 font-display font-semibold text-white">Unified Protocol Queue</td>
+                                    <td class="py-4 px-6 text-slate-300 bg-rose-950/10 border-x border-white/10">
+                                        Strictly old-school HTTP/FTP files. Need another app for torrents or live streams.
+                                    </td>
+                                    <td class="py-4 px-6 text-slate-100 bg-mint/5 font-medium">
+                                        HTTP 206 byte-range jobs, <code class="font-mono text-xs">yt-dlp</code> videos/streams, and BitTorrent transfers share one concurrency cap and persisted start/stop queue.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ARCHITECTURE & ANTI-BS TRANSPARENCY SECTION -->
+        <section id="architecture" class="py-16 md:py-24 border-t border-white/10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+                
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-2 text-xs font-mono text-mint uppercase tracking-widest mb-2">
+                            <i data-lucide="cpu" class="w-4 h-4"></i>
+                            <span>Zero-Slop Engineering • Honest Source Review</span>
+                        </div>
+                        <h2 class="font-display font-bold text-3xl sm:text-4xl text-white">
+                            v1.0.4 Architecture & <span class="text-cyan">Radical Transparency</span>
+                        </h2>
+                    </div>
+                    <p class="text-slate-400 text-sm max-w-md">
+                        No fake marketing promises. Here is what runs in the packaged Windows build today and what is actively on our open-source roadmap.
+                    </p>
+                </div>
+
+                <!-- 4-Card Bento Grid of v1.0.2 - v1.0.4 Engineering Highlights -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="glass-panel p-5 rounded-2xl border border-white/10 hover:border-mint/40 transition space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-mint/10 border border-mint/30 flex items-center justify-center text-mint">
+                            <i data-lucide="shield-alert" class="w-5 h-5"></i>
+                        </div>
+                        <div class="font-mono text-[11px] text-mint">NEW IN V1.0.4</div>
+                        <h3 class="font-display font-bold text-lg text-white">Duplicate Capture Guard</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Repeated captures of the same normalized source URL reuse the existing download record: active jobs aren't duplicated, paused/failed transfers resume, and completed files are skipped if still on disk.
+                        </p>
+                    </div>
+
+                    <div class="glass-panel p-5 rounded-2xl border border-white/10 hover:border-cyan/40 transition space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-cyan/10 border border-cyan/30 flex items-center justify-center text-cyan">
+                            <i data-lucide="gauge" class="w-5 h-5"></i>
+                        </div>
+                        <div class="font-mono text-[11px] text-cyan">NEW IN V1.0.3</div>
+                        <h3 class="font-display font-bold text-lg text-white">Instant Ready Frame & Lazy Load</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Removed the fixed 3.5s splash hold and heavy particle loops. Archive, video conversion, FTP, and SFTP modules lazy-load only when called, while row updates use a cached O(1) row map.
+                        </p>
+                    </div>
+
+                    <div class="glass-panel p-5 rounded-2xl border border-white/10 hover:border-mint/40 transition space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                            <i data-lucide="lock" class="w-5 h-5"></i>
+                        </div>
+                        <div class="font-mono text-[11px] text-emerald-400">SECURITY & PRIVACY</div>
+                        <h3 class="font-display font-bold text-lg text-white">Scoped Encrypted Cookie Jar</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Opt-in browser cookies travel only across local stdio, are encrypted in <code class="font-mono text-white">electron-store</code>, never persist in extension retry queues, and use auto-deleted temp Netscape jars for <code class="font-mono text-white">yt-dlp</code>.
+                        </p>
+                    </div>
+
+                    <div class="glass-panel p-5 rounded-2xl border border-white/10 hover:border-cyan/40 transition space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
+                            <i data-lucide="hard-drive" class="w-5 h-5"></i>
+                        </div>
+                        <div class="font-mono text-[11px] text-purple-400">V1.0.2 STABILITY</div>
+                        <h3 class="font-display font-bold text-lg text-white">Crash-Safe Chunk Recovery</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Reconciles metadata with on-disk byte lengths on startup, validates HTTP 206 <code class="font-mono text-white">Content-Range</code> & <code class="font-mono text-white">ETag</code> headers, and prevents multi-GB 7-Zip memory spikes during builds.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Interactive "What Works Today vs Honest Roadmap" Switcher -->
+                <div class="glass-panel rounded-2xl border border-white/15 p-6 sm:p-8 space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
+                        <div>
+                            <h3 class="font-display font-bold text-xl text-white">Source-of-Truth Capability Audit</h3>
+                            <p class="text-xs text-slate-400">We don't claim "any website works" or hide unfinished modules. Inspect our verified capabilities vs active roadmap:</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="switchAuditTab('verified')" id="audit-tab-verified" class="px-4 py-2 rounded-xl font-mono text-xs font-bold bg-mint text-void transition">
+                                ✓ Verified in v1.0.4 (12)
+                            </button>
+                            <button onclick="switchAuditTab('roadmap')" id="audit-tab-roadmap" class="px-4 py-2 rounded-xl font-mono text-xs font-bold glass-panel text-slate-300 hover:border-amber-400/50 transition">
+                                ⚙ In-Progress / Boundaries (6)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tab 1: Verified Capabilities -->
+                    <div id="audit-panel-verified" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                        <div class="p-3.5 rounded-xl bg-void/80 border border-mint/20 flex items-start gap-2.5">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-mint shrink-0 mt-0.5"></i>
+                            <div><strong class="text-white block">4–8 Thread HTTP 206 Engine</strong>Configurable per-job threads, ETag/Range validation, and verified temp sibling file merges.</div>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-void/80 border border-mint/20 flex items-start gap-2.5">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-mint shrink-0 mt-0.5"></i>
+                            <div><strong class="text-white block">RFC 5987 UTF-8 Filenames</strong>Parses <code class="font-mono text-mint">Content-Disposition</code> headers and probes HEAD-rejecting servers with 1-byte Range requests.</div>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-void/80 border border-mint/20 flex items-start gap-2.5">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-mint shrink-0 mt-0.5"></i>
+                            <div><strong class="text-white block">Bundled yt-dlp 2026.08.19</strong>Direct HTTPS format preference, live speed/ETA parsing, audio-only mode, and partial file preservation.</div>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-void/80 border border-mint/20 flex items-start gap-2.5">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-mint shrink-0 mt-0.5"></i>
+                            <div><strong class="text-white block">Windows Native Stdio Shim</strong><code class="font-mono text-mint">native-host-shim.exe</code> batches up to 8 links and keeps signed URLs out of process arguments.</div>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-void/80 border border-mint/20 flex items-start gap-2.5">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-mint shrink-0 mt-0.5"></i>
+                            <div><strong class="text-white block">Overnight Speed Scheduler</strong>Combines scheduled time-window bandwidth caps with saved limits without overwriting user settings.</div>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-void/80 border border-mint/20 flex items-start gap-2.5">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-mint shrink-0 mt-0.5"></i>
+                            <div><strong class="text-white block">Zero Trial / Payment Code</strong>All legacy activation, device-ID, and PHP licensing endpoints are stripped from the desktop app.</div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Honest Boundaries & In-Progress Roadmap -->
+                    <div id="audit-panel-roadmap" class="hidden grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                        <div class="p-3.5 rounded-xl bg-void/80 border border-amber-500/30 flex items-start gap-2.5">
+                            <i data-lucide="wrench" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+                            <div><strong class="text-white block">Optional Helper Modules</strong>FTP/SFTP, archive extraction, video conversion, proxy, and mirror modules exist in source and lazy-load, but full UI/IPC wiring is still in progress.</div>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-void/80 border border-amber-500/30 flex items-start gap-2.5">
+                            <i data-lucide="wrench" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+                            <div><strong class="text-white block">No DRM or Paywall Bypass</strong>CyberDM respects site access controls and does not bypass Widevine DRM or paid subscriptions.</div>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-void/80 border border-amber-500/30 flex items-start gap-2.5">
+                            <i data-lucide="wrench" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+                            <div><strong class="text-white block">Unified Retry & Per-Job Priority</strong>Queue start/stop and reorder controls work across HTTP, yt-dlp, and torrents; unified scheduler priority is next on the roadmap.</div>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-void/80 border border-amber-500/30 flex items-start gap-2.5">
+                            <i data-lucide="wrench" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+                            <div><strong class="text-white block">Maya AI Assistant (Bring Your Own Key)</strong>Maya code paths use Gemini Flash API and require the user's own Google AI API key and quota.</div>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-void/80 border border-amber-500/30 flex items-start gap-2.5">
+                            <i data-lucide="wrench" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+                            <div><strong class="text-white block">Cross-Origin Stream Headers</strong>Same-origin cookies transfer smoothly; custom cross-origin CDN authorization headers are being expanded.</div>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-void/80 border border-amber-500/30 flex items-start gap-2.5">
+                            <i data-lucide="wrench" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+                            <div><strong class="text-white block">Chrome Web Store Listing Prep</strong>Manual unpacked extension & native-host installer work today; narrower optional host permissions are planned for store publication.</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- DEVELOPER QUICKSTART & TERMINAL COPY BOX -->
+        <section id="dev-quickstart" class="py-16 md:py-24 border-t border-white/10">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+                
+                <div class="text-center space-y-2">
+                    <span class="text-xs font-mono text-cyan uppercase tracking-widest">Node.js 18+ • Windows x64 NSIS & Portable Targets</span>
+                    <h2 class="font-display font-bold text-3xl sm:text-4xl text-white">
+                        Build from Source in <span class="text-mint">60 Seconds</span>
+                    </h2>
+                    <p class="text-slate-400 text-sm">
+                        <code class="font-mono text-mint">scripts/download-tools.js</code> automatically fetches and verifies the pinned <code class="font-mono text-cyan">yt-dlp 2026.08.19</code> binary and compiles <code class="font-mono text-cyan">native-host-shim.exe</code>.
+                    </p>
+                </div>
+
+                <!-- Terminal Box -->
+                <div class="glass-panel-mint rounded-2xl overflow-hidden border border-mint/30">
+                    <div class="bg-void px-4 py-2.5 border-b border-white/10 flex items-center justify-between">
+                        <div class="flex items-center gap-2 font-mono text-xs text-slate-400">
+                            <i data-lucide="terminal-square" class="w-4 h-4 text-mint"></i>
+                            <span>PowerShell — CyberDM 1.0.4 Build Pipeline</span>
+                        </div>
+                        <button onclick="copyCliCommands()" class="px-3 py-1 rounded-lg bg-mint/15 hover:bg-mint/25 text-mint border border-mint/30 font-mono text-xs flex items-center gap-1.5 transition">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            <span id="copy-cli-text">Copy Commands</span>
+                        </button>
+                    </div>
+                    <pre id="cli-code-block" class="p-5 font-mono text-xs sm:text-sm text-slate-200 overflow-x-auto leading-relaxed bg-void/90"><code># 1. Install dependencies & auto-fetch pinned yt-dlp 2026.08.19 binary
+npm install
+
+# 2. Run Jest unit suite (chunk-splitter, recovery-manager, checksum, scheduler)
+npm test
+
+# 3. Launch CyberDM 1.0.4 desktop engine in development mode
+npm start
+
+# 4. Compile native-host-shim.exe & package Windows x64 Installer / Portable (.7z)
+npm run build:installer
+npm run build:portable</code></pre>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 border-t border-white/10 bg-void py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 font-mono">
+            <div class="flex items-center gap-3">
+                <span class="font-display font-bold text-white text-sm">Cyber<span class="text-mint">DM</span> 1.0.4</span>
+                <span>•</span>
+                <span>Crafted by <a href="https://github.com/CyberPrince-glitch" target="_blank" class="text-white hover:text-mint transition">Cyber Prince</a></span>
+                <span>•</span>
+                <span class="text-mint">MIT License</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="https://github.com/CyberPrince-glitch/CyberDM" target="_blank" class="hover:text-white transition">GitHub Repository</a>
+                <span>•</span>
+                <a href="https://github.com/CyberPrince-glitch/CyberDM/releases" target="_blank" class="hover:text-white transition">All Releases</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ================================================================= -->
+    <!-- INTERACTIVE APPLICATION LOGIC (Three.js, Remotion, Simulator, UI) -->
+    <!-- ================================================================= -->
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // -----------------------------------------------------------------
+        // 1. EXTENSION MODAL CONTROLLER
+        // -----------------------------------------------------------------
+        function toggleExtensionModal() {
+            const modal = document.getElementById('extension-modal');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        // -----------------------------------------------------------------
+        // 2. CUSTOM TOAST NOTIFICATION SYSTEM (Strictly no alert() calls)
+        // -----------------------------------------------------------------
+        function showToast(title, message, type = 'mint') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const borderColor = type === 'mint' ? 'border-mint/50' : (type === 'cyan' ? 'border-cyan/50' : 'border-amber-400/50');
+            const accentColor = type === 'mint' ? 'text-mint' : (type === 'cyan' ? 'text-cyan' : 'text-amber-400');
+
+            toast.className = `glass-panel ${borderColor} border rounded-xl p-4 shadow-2xl pointer-events-auto transform transition-all duration-300 translate-y-2 opacity-0`;
+            toast.innerHTML = `
+                <div class="flex items-start justify-between gap-3">
+                    <div class="space-y-1">
+                        <div class="font-display font-bold text-xs uppercase tracking-wider ${accentColor}">${title}</div>
+                        <div class="text-xs text-slate-200 leading-relaxed font-mono">${message}</div>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="text-slate-400 hover:text-white text-xs font-mono">✕</button>
+                </div>
+            `;
+            container.appendChild(toast);
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            });
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.classList.add('opacity-0', 'translate-y-2');
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 4200);
+        }
+
+        function triggerDownloadArtifact(filename, desc) {
+            showToast(
+                'CyberDM 1.0.4 Download Started',
+                `Initiating ${filename} (${desc}) from GitHub Releases • 0 Nag Screens Included.`,
+                'mint'
+            );
+        }
+
+        // -----------------------------------------------------------------
+        // 3. HERO EASTER EGG: SHATTER LEGACY IDM POPUP
+        // -----------------------------------------------------------------
+        function nudgePopup() {
+            const popup = document.getElementById('legacy-idm-popup');
+            popup.classList.add('scale-105');
+            setTimeout(() => popup.classList.remove('scale-105'), 150);
+            showToast('Access Denied (1999 Style)', 'Why pay $29.95 or risk malware when CyberDM 1.0.4 is MIT licensed? Click "Shatter Legacy Popup"!', 'amber');
+        }
+
+        function shatterLegacyPopup() {
+            const popup = document.getElementById('legacy-idm-popup');
+            const reborn = document.getElementById('reborn-cyberdm-card');
+            if (!popup || popup.classList.contains('hidden')) return;
+
+            const rect = popup.getBoundingClientRect();
+            // Generate 24 flying Windows 98 / Neon Mint shatter shards
+            for (let i = 0; i < 24; i++) {
+                const shard = document.createElement('div');
+                shard.className = 'shatter-shard';
+                const size = 14 + Math.random() * 24;
+                shard.style.width = `${size}px`;
+                shard.style.height = `${size}px`;
+                shard.style.left = `${rect.left + rect.width / 2 + (Math.random() - 0.5) * rect.width * 0.8}px`;
+                shard.style.top = `${rect.top + rect.height / 2 + (Math.random() - 0.5) * rect.height * 0.8}px`;
+                shard.style.background = i % 3 === 0 ? '#00F5A0' : (i % 2 === 0 ? '#D4D0C8' : '#0A246A');
+                shard.style.border = '1px solid #fff';
+                document.body.appendChild(shard);
+
+                const tx = (Math.random() - 0.5) * 420;
+                const ty = (Math.random() - 0.5) * 420;
+                const rot = (Math.random() - 0.5) * 720;
+
+                requestAnimationFrame(() => {
+                    shard.style.transform = `translate(${tx}px, ${ty}px) rotate(${rot}deg) scale(0.2)`;
+                    shard.style.opacity = '0';
+                });
+                setTimeout(() => shard.remove(), 900);
+            }
+
+            popup.classList.add('hidden');
+            reborn.classList.remove('hidden');
+            lucide.createIcons();
+            showToast('Legacy Popup Obliterated!', 'Welcome to CyberDM 1.0.4. Uncapped 8-thread HTTP 206 acceleration unlocked forever.', 'mint');
+        }
+
+        function summonIDMTrauma() {
+            const popup = document.getElementById('legacy-idm-popup');
+            const reborn = document.getElementById('reborn-cyberdm-card');
+            reborn.classList.add('hidden');
+            popup.classList.remove('hidden');
+            showToast('1999 Trauma Restored', 'The fake serial key popup is back. Shatter it whenever you are ready!', 'cyan');
+        }
+
+        // -----------------------------------------------------------------
+        // 4. REMOTION-STYLE 60 FPS PROGRAMMATIC MOTION ENGINE
+        // -----------------------------------------------------------------
+        let remotionFrame = 0;
+        const REMOTION_MAX_FRAMES = 360;
+        let remotionPlaying = true;
+        let currentRemotionScene = 0;
+
+        function initRemotionScene0() {
+            const grid = document.getElementById('scene0-chunks-grid');
+            grid.innerHTML = '';
+            for (let i = 0; i < 8; i++) {
+                const startMB = (i * 525).toFixed(0);
+                const endMB = ((i + 1) * 525).toFixed(0);
+                grid.innerHTML += `
+                    <div class="p-3 rounded-xl bg-void/90 border border-white/10 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-mint font-bold">THREAD #0${i + 1}</span>
+                            <span id="r-chunk-pct-${i}" class="text-cyan">0%</span>
+                        </div>
+                        <div class="text-[10px] text-slate-400">Range: bytes=${startMB}M-${endMB}M</div>
+                        <div class="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+                            <div id="r-chunk-bar-${i}" class="h-full bg-gradient-to-r from-mint to-cyan" style="width: 0%"></div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function selectRemotionScene(index) {
+            currentRemotionScene = index;
+            remotionFrame = 0;
+            const titles = [
+                'ByteRangeChunkEngine.tsx',
+                'NativeHostShimBridge.tsx',
+                'YtDlpStreamPipeline.tsx'
+            ];
+            document.getElementById('remotion-comp-title').textContent = titles[index];
+
+            for (let i = 0; i < 3; i++) {
+                const panel = document.getElementById(`remotion-scene-${i}`);
+                const tab = document.getElementById(`scene-tab-${i}`);
+                if (i === index) {
+                    panel.classList.remove('hidden');
+                    tab.className = 'px-3.5 py-2 rounded-xl font-mono text-xs font-semibold transition bg-mint text-void';
+                } else {
+                    panel.classList.add('hidden');
+                    tab.className = 'px-3.5 py-2 rounded-xl font-mono text-xs font-semibold transition glass-panel text-slate-300 hover:border-mint/40';
+                }
+            }
+            renderRemotionFrame(remotionFrame);
+        }
+
+        function renderRemotionFrame(frame) {
+            document.getElementById('remotion-scrubber').value = frame;
+            document.getElementById('remotion-frame-readout').textContent = `FRAME ${String(frame).padStart(3, '0')} / 360`;
+            const secs = Math.floor(frame / 60);
+            const sub = frame % 60;
+            document.getElementById('remotion-time-cur').textContent = `0${secs}:${String(sub).padStart(2, '0')}`;
+
+            const norm = frame / REMOTION_MAX_FRAMES;
+
+            if (currentRemotionScene === 0) {
+                let totalProgress = 0;
+                for (let i = 0; i < 8; i++) {
+                    const speedFactor = 1 + ((i % 3) * 0.12);
+                    const pct = Math.min(100, Math.floor(norm * 115 * speedFactor));
+                    totalProgress += pct;
+                    const bar = document.getElementById(`r-chunk-bar-${i}`);
+                    const label = document.getElementById(`r-chunk-pct-${i}`);
+                    if (bar && label) {
+                        bar.style.width = `${pct}%`;
+                        label.textContent = `${pct}%`;
+                    }
+                }
+                const avgPct = totalProgress / 800;
+                const gbNow = (4.20 * avgPct).toFixed(2);
+                document.getElementById('scene0-total-bytes').textContent = `${gbNow} / 4.20 GB`;
+                const badge = document.getElementById('scene0-status-badge');
+                if (avgPct >= 0.99) {
+                    badge.textContent = '✓ 8 CHUNKS MERGED & SIZE VERIFIED';
+                    badge.className = 'text-sm font-bold text-emerald-400';
+                } else {
+                    badge.textContent = 'DOWNLOADING 8 PARALLEL BYTE RANGES...';
+                    badge.className = 'text-sm font-bold text-mint';
+                }
+            } else if (currentRemotionScene === 1) {
+                const n1 = document.getElementById('shim-node-1');
+                const n2 = document.getElementById('shim-node-2');
+                const n3 = document.getElementById('shim-node-3');
+                const l1 = document.getElementById('shim-step1-log');
+                const l2 = document.getElementById('shim-step2-log');
+                const l3 = document.getElementById('shim-step3-log');
+
+                n1.classList.remove('border-mint');
+                n2.classList.remove('border-mint');
+                n3.classList.remove('border-mint');
+
+                if (norm < 0.33) {
+                    n1.classList.add('border-mint');
+                    l1.textContent = 'req_id: cdm_98f2a • Dispatching native message...';
+                    l2.textContent = 'Awaiting framed stdio packet...';
+                    l3.textContent = 'Chrome download kept alive as safety fallback';
+                } else if (norm < 0.66) {
+                    n2.classList.add('border-mint');
+                    l1.textContent = 'Packet sent to native-host-shim.exe';
+                    l2.textContent = 'Writing LocalAppData IPC file (URL hidden from CLI)';
+                    l3.textContent = 'Probing HTTP 206 / Content-Disposition...';
+                } else {
+                    n3.classList.add('border-mint');
+                    l1.textContent = 'Received Engine ACK • Chrome copy safely canceled';
+                    l2.textContent = 'Ack returned in 14ms • Shim idle';
+                    l3.textContent = '✓ Accepted into CyberDM 8-Thread Queue!';
+                }
+            } else if (currentRemotionScene === 2) {
+                const pct = Math.min(100, Math.floor(norm * 105));
+                document.getElementById('ytdlp-pct-text').textContent = `${pct}%`;
+                document.getElementById('ytdlp-bar').style.width = `${pct}%`;
+                const pill = document.getElementById('ytdlp-stage-pill');
+                const term = document.getElementById('ytdlp-terminal-lines');
+
+                if (norm < 0.25) {
+                    pill.textContent = 'PROBING YT-DLP 2026.08.19';
+                    term.innerHTML = `
+                        <div class="text-cyan">$ yt-dlp --cookies temp_jar_89a.txt --dump-json</div>
+                        <div>[info] Preferring direct HTTPS format over HLS m3u8...</div>
+                    `;
+                } else if (norm < 0.85) {
+                    pill.textContent = 'STREAMING DIRECT HTTPS 4K60';
+                    term.innerHTML = `
+                        <div class="text-cyan">$ yt-dlp -f "315+251" --newline</div>
+                        <div class="text-mint">[download] ${pct}.0% of 1.84GiB at 86.4MiB/s ETA 00:0${Math.max(1, 9 - Math.floor(norm * 9))}</div>
+                        <div class="text-slate-400">[cookie-jar] Scoped to source origin only</div>
+                    `;
+                } else {
+                    pill.textContent = '✓ COMPLETED & COOKIE JAR SHREDDED';
+                    term.innerHTML = `
+                        <div class="text-emerald-400">[Merger] Merging formats into "Cyberpunk_2077_PathTracing_4K60.mp4"</div>
+                        <div class="text-mint">[security] Temp Netscape cookie jar deleted from disk.</div>
+                    `;
+                }
+            }
+        }
+
+        function toggleRemotionPlay() {
+            remotionPlaying = !remotionPlaying;
+            const btn = document.getElementById('remotion-play-btn');
+            btn.innerHTML = remotionPlaying
+                ? '<i data-lucide="pause" class="w-4 h-4"></i>'
+                : '<i data-lucide="play" class="w-4 h-4"></i>';
+            lucide.createIcons();
+        }
+
+        function scrubRemotion(val) {
+            remotionFrame = parseInt(val, 10);
+            renderRemotionFrame(remotionFrame);
+        }
+
+        // -----------------------------------------------------------------
+        // 5. INTERACTIVE DESKTOP APP SIMULATOR + REALTIME SPEED GRAPH
+        // -----------------------------------------------------------------
+        let simQueueRunning = true;
+        let simThreadCount = 8;
+        let simSpeedCapped = false;
+        let simFilter = 'all';
+
+        const simJobs = [
+            {
+                id: 'job-1',
+                name: 'ubuntu-26.04-desktop-amd64.iso',
+                url: 'https://releases.ubuntu.com/26.04/ubuntu-26.04-desktop-amd64.iso',
+                category: 'http',
+                badge: 'HTTP 206 • 8 THREADS',
+                sizeMB: 4820,
+                downloadedMB: 2140,
+                speedMBs: 68.4,
+                status: 'downloading',
+                chunks: [65, 48, 72, 55, 40, 80, 50, 62]
+            },
+            {
+                id: 'job-2',
+                name: '4K_Cyberpunk_Unreal_Demo_60fps.mp4',
+                url: 'https://media.cyberdm.dev/streams/4K_Cyberpunk_Unreal_Demo_60fps.mp4',
+                category: 'video',
+                badge: 'yt-dlp 2026.08 • HTTPS',
+                sizeMB: 1950,
+                downloadedMB: 1120,
+                speedMBs: 46.2,
+                status: 'downloading',
+                chunks: [58, 58, 58, 58]
+            },
+            {
+                id: 'job-3',
+                name: 'Blender_Open_Movie_Archive.torrent',
+                url: 'magnet:?xt=urn:btih:cyberdmblenderarchive2026',
+                category: 'torrent',
+                badge: 'BITTORRENT • SHARED QUEUE',
+                sizeMB: 3400,
+                downloadedMB: 980,
+                speedMBs: 28.5,
+                status: 'downloading',
+                chunks: [35, 24, 41, 29]
+            }
+        ];
+
+        const samplePool = [
+            { name: 'Windows11_Insider_26H2_x64.iso', url: 'https://dl.cyberdm.dev/isos/win11_26h2.iso', category: 'http', badge: 'HTTP 206 • RANGE', sizeMB: 5400 },
+            { name: 'Godot_Engine_v4.5_Win64.zip', url: 'https://dl.cyberdm.dev/releases/godot_4.5.zip', category: 'http', badge: 'HTTP 206 • RANGE', sizeMB: 420 },
+            { name: 'Linus_Tech_8K_RAW_Stream.mkv', url: 'https://video.cyberdm.dev/watch?v=8kstream', category: 'video', badge: 'yt-dlp 2026.08 • HTTPS', sizeMB: 2890 }
+        ];
+        let sampleIdx = 0;
+
+        function renderSimJobs() {
+            const container = document.getElementById('sim-downloads-list');
+            container.innerHTML = '';
+
+            const visible = simJobs.filter(j => simFilter === 'all' || j.category === simFilter);
+            document.getElementById('count-all').textContent = simJobs.length;
+
+            visible.forEach(job => {
+                const pct = Math.min(100, ((job.downloadedMB / job.sizeMB) * 100)).toFixed(1);
+                const isPaused = job.status === 'paused' || !simQueueRunning;
+                const isDone = job.status === 'completed';
+
+                const chunkBarsHtml = job.chunks.map(c => `
+                    <div class="h-1.5 rounded-sm bg-slate-800 overflow-hidden">
+                        <div class="h-full ${isDone ? 'bg-emerald-400' : (isPaused ? 'bg-amber-400' : 'bg-mint')}" style="width: ${Math.min(100, c)}%"></div>
+                    </div>
+                `).join('');
+
+                const row = document.createElement('div');
+                row.className = 'p-4 rounded-xl bg-void/90 border border-white/10 hover:border-mint/30 transition space-y-2.5';
+                row.innerHTML = `
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex items-center gap-2.5">
+                            <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-mint/15 text-mint border border-mint/30">${job.badge}</span>
+                            <span class="font-display font-semibold text-sm text-white break-all">${job.name}</span>
+                        </div>
+                        <div class="flex items-center gap-3 font-mono text-xs">
+                            <span class="${isDone ? 'text-emerald-400' : (isPaused ? 'text-amber-400' : 'text-cyan')} font-bold">
+                                ${isDone ? 'COMPLETED ✓' : (isPaused ? 'PAUSED' : `${job.speedMBs.toFixed(1)} MB/s`)}
+                            </span>
+                            <button onclick="toggleSimJob('${job.id}')" class="px-2.5 py-1 rounded bg-white/5 hover:bg-white/15 text-slate-200 border border-white/10 transition">
+                                ${isDone ? 'Restart' : (job.status === 'paused' ? 'Resume' : 'Pause')}
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Overall Progress Bar -->
+                    <div class="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-mint to-cyan transition-all duration-150" style="width: ${pct}%"></div>
+                    </div>
+
+                    <!-- Individual Byte-Range Chunk Visualizer -->
+                    <div class="grid grid-cols-${job.chunks.length} gap-1 pt-0.5">
+                        ${chunkBarsHtml}
+                    </div>
+
+                    <div class="flex justify-between text-[11px] font-mono text-slate-400">
+                        <span>${job.downloadedMB.toFixed(0)} MB / ${job.sizeMB} MB (${pct}%)</span>
+                        <span>ETag & Range Verified • Crash-Safe .part</span>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function toggleSimJob(jobId) {
+            const job = simJobs.find(j => j.id === jobId);
+            if (!job) return;
+            if (job.status === 'completed') {
+                job.downloadedMB = 0;
+                job.status = 'downloading';
+                job.chunks = job.chunks.map(() => 5);
+            } else if (job.status === 'paused') {
+                job.status = 'downloading';
+            } else {
+                job.status = 'paused';
+            }
+            renderSimJobs();
+        }
+
+        function simAddTestDownload() {
+            const template = samplePool[sampleIdx % samplePool.length];
+            sampleIdx++;
+
+            const existing = simJobs.find(j => j.url === template.url);
+            if (existing) {
+                simTestDuplicateCapture();
+                return;
+            }
+
+            const newChunks = Array.from({ length: simThreadCount }, () => Math.floor(Math.random() * 15));
+            simJobs.unshift({
+                id: 'job-' + Date.now(),
+                name: template.name,
+                url: template.url,
+                category: template.category,
+                badge: `HTTP 206 • ${simThreadCount} THREADS`,
+                sizeMB: template.sizeMB,
+                downloadedMB: 120,
+                speedMBs: 54.0,
+                status: 'downloading',
+                chunks: newChunks
+            });
+            renderSimJobs();
+            showToast('Job Added to Shared Queue', `Enqueued "${template.name}" with ${simThreadCount} HTTP byte-range threads.`, 'mint');
+        }
+
+        function simTestDuplicateCapture() {
+            const target = simJobs[0];
+            if (!target) return;
+            if (target.status === 'paused') {
+                target.status = 'downloading';
+                renderSimJobs();
+                showToast(
+                    'v1.0.4 Duplicate Capture Protection',
+                    `Normalized URL matched "${target.name}". Instead of creating a duplicate, CyberDM automatically resumed the paused transfer!`,
+                    'cyan'
+                );
+            } else if (target.status === 'completed') {
+                showToast(
+                    'v1.0.4 Duplicate Capture Protection',
+                    `"${target.name}" already exists on disk. Skipped duplicate capture to save bandwidth.`,
+                    'mint'
+                );
+            } else {
+                showToast(
+                    'v1.0.4 Duplicate Capture Protection',
+                    `"${target.name}" is already active in the queue. Reusing existing job record (Zero duplicate modal spam).`,
+                    'mint'
+                );
+            }
+        }
+
+        function simToggleQueueMaster() {
+            simQueueRunning = !simQueueRunning;
+            const text = document.getElementById('sim-queue-master-text');
+            text.textContent = simQueueRunning ? 'Queue: RUNNING' : 'Queue: STOPPED';
+            showToast(
+                'Shared Queue State Persisted',
+                `Queue is now ${simQueueRunning ? 'RUNNING' : 'STOPPED'}. Saved in electron-store across app restarts.`,
+                'cyan'
+            );
+            renderSimJobs();
+        }
+
+        function updateSimThreads(val) {
+            simThreadCount = parseInt(val, 10);
+            document.getElementById('sim-thread-val').textContent = simThreadCount;
+            if (simJobs[0] && simJobs[0].category === 'http') {
+                simJobs[0].badge = `HTTP 206 • ${simThreadCount} THREADS`;
+                simJobs[0].chunks = Array.from({ length: simThreadCount }, (_, idx) => simJobs[0].chunks[idx % simJobs[0].chunks.length] || 50);
+                renderSimJobs();
+            }
+        }
+
+        function toggleSimSpeedCap() {
+            simSpeedCapped = !simSpeedCapped;
+            const el = document.getElementById('sim-cap-state');
+            el.textContent = simSpeedCapped ? '50.0 MB/s CAP' : 'UNCAPPED';
+            el.className = simSpeedCapped ? 'text-amber-400' : 'text-mint';
+            showToast(
+                'Scheduled Speed Cap Updated',
+                simSpeedCapped
+                    ? 'Aggregate bandwidth cap set to 50.0 MB/s without overwriting saved preferences.'
+                    : 'Aggregate bandwidth cap lifted. Full multi-threaded speed active.',
+                'mint'
+            );
+        }
+
+        function filterSimCategory(cat) {
+            simFilter = cat;
+            ['all', 'http', 'video', 'torrent'].forEach(c => {
+                const btn = document.getElementById(`cat-btn-${c}`);
+                if (c === cat) {
+                    btn.className = 'w-full px-3 py-2 rounded-xl bg-mint/15 text-mint border border-mint/30 font-medium text-xs flex items-center justify-between';
+                } else {
+                    btn.className = 'w-full px-3 py-2 rounded-xl hover:bg-white/5 text-slate-300 font-medium text-xs flex items-center justify-between transition';
+                }
+            });
+            renderSimJobs();
+        }
+
+        const speedHistory = Array(48).fill(110);
+
+        function drawSpeedGraph() {
+            const canvas = document.getElementById('speed-graph-canvas');
+            if (!canvas) return;
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            const ctx = canvas.getContext('2d');
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const maxVal = 200;
+            const stepX = canvas.width / (speedHistory.length - 1);
+
+            const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            grad.addColorStop(0, 'rgba(0, 245, 160, 0.38)');
+            grad.addColorStop(1, 'rgba(0, 217, 245, 0.02)');
+
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height);
+            speedHistory.forEach((val, idx) => {
+                const x = idx * stepX;
+                const y = canvas.height - (Math.min(maxVal, val) / maxVal) * (canvas.height - 10);
+                ctx.lineTo(x, y);
+            });
+            ctx.lineTo(canvas.width, canvas.height);
+            ctx.closePath();
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            ctx.beginPath();
+            speedHistory.forEach((val, idx) => {
+                const x = idx * stepX;
+                const y = canvas.height - (Math.min(maxVal, val) / maxVal) * (canvas.height - 10);
+                if (idx === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.strokeStyle = '#00F5A0';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        // -----------------------------------------------------------------
+        // 6. ARCHITECTURE AUDIT TABS & CLI CLIPBOARD COPY
+        // -----------------------------------------------------------------
+        function switchAuditTab(tab) {
+            const vPanel = document.getElementById('audit-panel-verified');
+            const rPanel = document.getElementById('audit-panel-roadmap');
+            const vBtn = document.getElementById('audit-tab-verified');
+            const rBtn = document.getElementById('audit-tab-roadmap');
+
+            if (tab === 'verified') {
+                vPanel.classList.remove('hidden');
+                vPanel.classList.add('grid');
+                rPanel.classList.add('hidden');
+                rPanel.classList.remove('grid');
+                vBtn.className = 'px-4 py-2 rounded-xl font-mono text-xs font-bold bg-mint text-void transition';
+                rBtn.className = 'px-4 py-2 rounded-xl font-mono text-xs font-bold glass-panel text-slate-300 hover:border-amber-400/50 transition';
+            } else {
+                rPanel.classList.remove('hidden');
+                rPanel.classList.add('grid');
+                vPanel.classList.add('hidden');
+                vPanel.classList.remove('grid');
+                rBtn.className = 'px-4 py-2 rounded-xl font-mono text-xs font-bold bg-amber-400 text-void transition';
+                vBtn.className = 'px-4 py-2 rounded-xl font-mono text-xs font-bold glass-panel text-slate-300 hover:border-mint/50 transition';
+            }
+        }
+
+        function copyCliCommands() {
+            const text = document.getElementById('cli-code-block').innerText;
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            document.getElementById('copy-cli-text').textContent = 'Copied! ✓';
+            showToast('Copied to Clipboard', 'PowerShell build commands copied. Ready to run npm install & npm start.', 'mint');
+            setTimeout(() => {
+                document.getElementById('copy-cli-text').textContent = 'Copy Commands';
+            }, 2500);
+        }
+
+        // -----------------------------------------------------------------
+        // 7. THREE.JS 3D CYBERNETIC 8-STREAM VORTEX ENGINE
+        // -----------------------------------------------------------------
+        let vortexMode = 'HIGH';
+        let scene, camera, renderer, coreMesh, particleSystem, particlePositions, particleVelocities;
+        let mouseX = 0, mouseY = 0;
+
+        function initThreeJSVortex() {
+            const canvas = document.getElementById('webgl-canvas');
+            scene = new THREE.Scene();
+
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 26;
+
+            renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            const coreGeo = new THREE.IcosahedronGeometry(3.2, 1);
+            const coreMat = new THREE.MeshBasicMaterial({
+                color: 0x00F5A0,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.22
+            });
+            coreMesh = new THREE.Mesh(coreGeo, coreMat);
+            scene.add(coreMesh);
+
+            const count = 900;
+            const geo = new THREE.BufferGeometry();
+            particlePositions = new Float32Array(count * 3);
+            const colors = new Float32Array(count * 3);
+            particleVelocities = [];
+
+            const colorMint = new THREE.Color(0x00F5A0);
+            const colorCyan = new THREE.Color(0x00D9F5);
+
+            for (let i = 0; i < count; i++) {
+                const streamIndex = i % 8;
+                const angle = (streamIndex / 8) * Math.PI * 2 + (Math.random() * 0.25);
+                const radius = 5 + Math.random() * 28;
+
+                particlePositions[i * 3] = Math.cos(angle) * radius;
+                particlePositions[i * 3 + 1] = Math.sin(angle) * radius;
+                particlePositions[i * 3 + 2] = (Math.random() - 0.5) * 18;
+
+                particleVelocities.push({
+                    angle,
+                    radius,
+                    speed: 0.12 + Math.random() * 0.18
+                });
+
+                const mixed = streamIndex % 2 === 0 ? colorMint : colorCyan;
+                colors[i * 3] = mixed.r;
+                colors[i * 3 + 1] = mixed.g;
+                colors[i * 3 + 2] = mixed.b;
+            }
+
+            geo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+            geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const mat = new THREE.PointsMaterial({
+                size: 0.18,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.65
+            });
+
+            particleSystem = new THREE.Points(geo, mat);
+            scene.add(particleSystem);
+
+            window.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+                mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+            });
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                drawSpeedGraph();
+            });
+        }
+
+        function toggle3DVortex() {
+            const label = document.getElementById('vortex-label');
+            const dot = document.getElementById('vortex-dot');
+            const canvas = document.getElementById('webgl-canvas');
+
+            if (vortexMode === 'HIGH') {
+                vortexMode = 'LOW';
+                label.textContent = '3D Core: ECO';
+                dot.className = 'w-2 h-2 rounded-full bg-cyan';
+                canvas.style.opacity = '0.35';
+            } else if (vortexMode === 'LOW') {
+                vortexMode = 'OFF';
+                label.textContent = '3D Core: OFF';
+                dot.className = 'w-2 h-2 rounded-full bg-slate-500';
+                canvas.style.opacity = '0';
+            } else {
+                vortexMode = 'HIGH';
+                label.textContent = '3D Core: HIGH';
+                dot.className = 'w-2 h-2 rounded-full bg-mint animate-pulse';
+                canvas.style.opacity = '1';
+            }
+        }
+
+        // -----------------------------------------------------------------
+        // 8. MASTER ANIMATION & SIMULATION LOOPS (Started on window.onload)
+        // -----------------------------------------------------------------
+        let lastSimTick = 0;
+
+        function masterAnimationLoop(timestamp) {
+            requestAnimationFrame(masterAnimationLoop);
+
+            // 1. Update Three.js 3D Scene
+            if (vortexMode !== 'OFF' && renderer && scene && camera) {
+                const speedMult = vortexMode === 'HIGH' ? 1 : 0.35;
+                coreMesh.rotation.x += 0.003 * speedMult;
+                coreMesh.rotation.y += 0.005 * speedMult;
+
+                const posArr = particleSystem.geometry.attributes.position.array;
+                for (let i = 0; i < particleVelocities.length; i++) {
+                    const v = particleVelocities[i];
+                    v.radius -= v.speed * speedMult;
+                    v.angle += 0.008 * speedMult;
+                    if (v.radius < 2.2) {
+                        v.radius = 28 + Math.random() * 6;
+                    }
+                    posArr[i * 3] = Math.cos(v.angle) * v.radius;
+                    posArr[i * 3 + 1] = Math.sin(v.angle) * v.radius;
+                }
+                particleSystem.geometry.attributes.position.needsUpdate = true;
+
+                camera.position.x += (mouseX * 3.5 - camera.position.x) * 0.04;
+                camera.position.y += (-mouseY * 3.5 - camera.position.y) * 0.04;
+                camera.lookAt(scene.position);
+
+                renderer.render(scene, camera);
+            }
+
+            // 2. Advance Remotion 60 FPS Player
+            if (remotionPlaying) {
+                remotionFrame = (remotionFrame + 1) % (REMOTION_MAX_FRAMES + 1);
+                renderRemotionFrame(remotionFrame);
+            }
+
+            // 3. Update Live Desktop Simulator every 280ms
+            if (timestamp - lastSimTick > 280) {
+                lastSimTick = timestamp;
+                let totalSpeed = 0;
+                let activeCount = 0;
+
+                if (simQueueRunning) {
+                    simJobs.forEach(job => {
+                        if (job.status === 'downloading') {
+                            activeCount++;
+                            const threadBoost = job.category === 'http' ? (simThreadCount / 8) : 1;
+                            let currentSpeed = job.speedMBs * threadBoost + (Math.random() - 0.5) * 4.5;
+                            if (simSpeedCapped) {
+                                currentSpeed = Math.min(currentSpeed, 18.5);
+                            }
+                            totalSpeed += currentSpeed;
+
+                            job.downloadedMB = Math.min(job.sizeMB, job.downloadedMB + currentSpeed * 0.35);
+                            job.chunks = job.chunks.map(c => Math.min(100, c + Math.random() * 2.2));
+
+                            if (job.downloadedMB >= job.sizeMB) {
+                                job.downloadedMB = job.sizeMB;
+                                job.status = 'completed';
+                                job.chunks = job.chunks.map(() => 100);
+                            }
+                        }
+                    });
+                }
+
+                if (simSpeedCapped) {
+                    totalSpeed = Math.min(50.0, totalSpeed);
+                }
+
+                speedHistory.push(totalSpeed);
+                speedHistory.shift();
+
+                document.getElementById('sim-active-count').textContent = activeCount;
+                document.getElementById('sim-total-speed-readout').textContent = `${totalSpeed.toFixed(1)} MB/s`;
+
+                renderSimJobs();
+                drawSpeedGraph();
+            }
+        }
+
+        window.onload = function () {
+            initRemotionScene0();
+            renderRemotionFrame(0);
+            renderSimJobs();
+            initThreeJSVortex();
+            drawSpeedGraph();
+            requestAnimationFrame(masterAnimationLoop);
+        };
+    </script>
+</body>
+</html>
