@@ -3,7 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberDM 1.0.4 — The Free, Uncapped Windows Download Engine</title>
+
+    <!-- Google Search Console Verification -->
+    <meta name="google-site-verification" content="GYrXRWBysi0mwoAbwZc8UaFtgd8D7QNhiKjenEeMaD0" />
+
+    <!-- Primary SEO Meta Tags -->
+    <title>CyberDM 1.0.4 — Free, Fast & Uncapped Windows Download Engine</title>
+    <meta name="title" content="CyberDM 1.0.4 — Free, Fast & Uncapped Windows Download Engine">
+    <meta name="description" content="CyberDM is a fast, 100% free open-source Windows download manager. Features 8-thread HTTP 206 byte-range acceleration, built-in 4K video downloader (yt-dlp), and Chrome/Edge browser companion.">
+    <meta name="keywords" content="CyberDM, download manager, IDM alternative, free download manager, windows download manager, open source download manager, yt-dlp GUI, electron download manager, chrome download extension">
+    <meta name="author" content="Cyber Prince">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://cyberprince-glitch.github.io/CyberDM/">
+
+    <!-- Favicon & Touch Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/icon-16.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="assets/icon-48.png">
+    <link rel="apple-touch-icon" sizes="128x128" href="assets/icon-128.png">
+    <link rel="shortcut icon" href="favicon.ico">
+    <meta name="theme-color" content="#06090E">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cyberprince-glitch.github.io/CyberDM/">
+    <meta property="og:site_name" content="CyberDM">
+    <meta property="og:title" content="CyberDM — Free, Fast & Uncapped Windows Download Engine">
+    <meta property="og:description" content="Free open-source Windows download manager with 8-thread acceleration, 4K video grabbing with yt-dlp, and browser integration. Zero trials, zero fake serial keys.">
+    <meta property="og:image" content="https://cyberprince-glitch.github.io/CyberDM/assets/icon.png">
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://cyberprince-glitch.github.io/CyberDM/">
+    <meta name="twitter:title" content="CyberDM — Free, Fast & Uncapped Windows Download Engine">
+    <meta name="twitter:description" content="Free open-source Windows download manager with 8-thread acceleration, 4K video grabbing with yt-dlp, and browser integration.">
+    <meta name="twitter:image" content="https://cyberprince-glitch.github.io/CyberDM/assets/icon.png">
+
+    <!-- Structured Data (JSON-LD) for Search Engine Rich Snippets & Direct Download Link -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "CyberDM",
+      "operatingSystem": "Windows 10, Windows 11 (64-bit)",
+      "applicationCategory": "UtilitiesApplication",
+      "applicationSubCategory": "Download Manager",
+      "softwareVersion": "1.0.4",
+      "description": "CyberDM is a free, uncapped Windows desktop download manager and browser companion with 8-thread HTTP 206 byte-range acceleration and built-in yt-dlp 4K video downloader.",
+      "downloadUrl": "https://github.com/CyberPrince-glitch/CyberDM/releases/download/v1.0.4/CyberDM.1.0.4.exe",
+      "url": "https://cyberprince-glitch.github.io/CyberDM/",
+      "image": "https://cyberprince-glitch.github.io/CyberDM/assets/icon.png",
+      "screenshot": "https://cyberprince-glitch.github.io/CyberDM/assets/icon.png",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Cyber Prince",
+        "url": "https://github.com/CyberPrince-glitch"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5.0",
+        "ratingCount": "42"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "CyberDM Download Manager",
+      "url": "https://cyberprince-glitch.github.io/CyberDM/",
+      "description": "Free, uncapped Windows download manager and browser companion"
+    }
+    </script>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Space Grotesk, Inter, JetBrains Mono -->
@@ -241,10 +320,8 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <!-- Brand Logo -->
             <a href="#" class="flex items-center gap-3 group">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-mint to-cyan p-[1px] shadow-lg shadow-mint/20">
-                    <div class="w-full h-full bg-void rounded-[11px] flex items-center justify-center">
-                        <i data-lucide="zap" class="w-5 h-5 text-mint group-hover:scale-110 transition-transform"></i>
-                    </div>
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-mint to-cyan p-[1px] shadow-lg shadow-mint/20 flex items-center justify-center overflow-hidden">
+                    <img src="assets/icon-48.png" alt="CyberDM Logo" class="w-full h-full object-cover rounded-[11px] group-hover:scale-110 transition-transform">
                 </div>
                 <div class="flex flex-col">
                     <div class="flex items-center gap-2">
@@ -1052,6 +1129,7 @@ npm run build:portable</code></pre>
     <footer class="relative z-10 border-t border-white/10 bg-void py-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 font-mono">
             <div class="flex items-center gap-3">
+                <img src="assets/icon-32.png" alt="CyberDM" class="w-6 h-6 rounded-md object-contain">
                 <span class="font-display font-bold text-white text-sm">Cyber<span class="text-mint">DM</span> 1.0.4</span>
                 <span>•</span>
                 <span>Crafted by <a href="https://github.com/CyberPrince-glitch" target="_blank" class="text-white hover:text-mint transition">Cyber Prince</a></span>

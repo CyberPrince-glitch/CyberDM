@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://cyberprince-glitch.github.io/CyberDM/sitemap.xml
